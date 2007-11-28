@@ -118,6 +118,12 @@ public class MultiHTMLSuiteRunner {
                         "User Extensions file doesn't exist: "
                                 + userExtensions.getAbsolutePath());
             }
+            if (!"user-extensions.js"
+                    .equalsIgnoreCase(userExtensions.getName())) {
+                throw new RuntimeException(
+                        "User extensions file MUST be called \"user-extensions.js\": "
+                                + userExtensions.getAbsolutePath());
+            }
         }
 
         int timeoutInSeconds = 60 * 60;
