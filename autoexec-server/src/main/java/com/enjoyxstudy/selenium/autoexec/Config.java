@@ -11,14 +11,23 @@ public class Config {
     /** startURL */
     private String startURL;
 
-    /** suite */
-    private String suite;
+    /** suiteDir */
+    private String suiteDir;
+
+    /** suiteRepo */
+    private String suiteRepo;
+
+    /** suiteRepoUsername */
+    private String suiteRepoUsername;
+
+    /** suiteRepoPassword */
+    private String suiteRepoPassword;
 
     /** generateSuite */
     private boolean generateSuite;
 
-    /** result */
-    private String result;
+    /** resultDir */
+    private String resultDir;
 
     /** timeoutInSeconds */
     private int timeoutInSeconds = 60 * 60;
@@ -52,17 +61,17 @@ public class Config {
     }
 
     /**
-     * @return result
+     * @return resultDir
      */
-    public String getResult() {
-        return result;
+    public String getResultDir() {
+        return resultDir;
     }
 
     /**
-     * @param result result
+     * @param resultDir resultDir
      */
-    public void setResult(String result) {
-        this.result = result;
+    public void setResultDir(String resultDir) {
+        this.resultDir = resultDir;
     }
 
     /**
@@ -80,17 +89,59 @@ public class Config {
     }
 
     /**
-     * @return suite
+     * @return suiteDir
      */
-    public String getSuite() {
-        return suite;
+    public String getSuiteDir() {
+        return suiteDir;
     }
 
     /**
-     * @param suite suite
+     * @param suiteDir suiteDir
      */
-    public void setSuite(String suite) {
-        this.suite = suite;
+    public void setSuiteDir(String suiteDir) {
+        this.suiteDir = suiteDir;
+    }
+
+    /**
+     * @return suiteRepo
+     */
+    public String getSuiteRepo() {
+        return suiteRepo;
+    }
+
+    /**
+     * @param suiteRepo suiteRepo
+     */
+    public void setSuiteRepo(String suiteRepo) {
+        this.suiteRepo = suiteRepo;
+    }
+
+    /**
+     * @return suiteRepoPassword
+     */
+    public String getSuiteRepoPassword() {
+        return suiteRepoPassword;
+    }
+
+    /**
+     * @param suiteRepoPassword suiteRepoPassword
+     */
+    public void setSuiteRepoPassword(String suiteRepoPassword) {
+        this.suiteRepoPassword = suiteRepoPassword;
+    }
+
+    /**
+     * @return suiteRepoUsername
+     */
+    public String getSuiteRepoUsername() {
+        return suiteRepoUsername;
+    }
+
+    /**
+     * @param suiteRepoUsername suiteRepoUsername
+     */
+    public void setSuiteRepoUsername(String suiteRepoUsername) {
+        this.suiteRepoUsername = suiteRepoUsername;
     }
 
     /**

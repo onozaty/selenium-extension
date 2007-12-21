@@ -7,5 +7,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/selenium-ext-htmlsuite-0.1.jar"/>
 	<classpathentry kind="lib" path="lib/selenium-server-0.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/svnkit-1.1.4.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

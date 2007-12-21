@@ -23,7 +23,7 @@ public class AutoExecServerTest extends TestCase {
 
         AutoExecServer autoExecServer = new AutoExecServer();
         autoExecServer.startup(properties);
-        Thread.sleep(5000);
+        autoExecServer.process();
         autoExecServer.destroy();
 
     }
