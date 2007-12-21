@@ -1,11 +1,16 @@
 package com.enjoyxstudy.selenium.autoexec;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.SeleniumServer;
+import org.tmatesoft.svn.core.SVNException;
+
+import com.enjoyxstudy.selenium.autoexec.util.FileUtils;
+import com.enjoyxstudy.selenium.autoexec.util.SVNUtils;
 
 /**
  * @author onozaty
@@ -41,10 +46,17 @@ public class AutoExecServer {
         config = new Config();
         config.setBrowsers(properties.getProperty("browser").split(","));
         config.setStartURL(properties.getProperty("startURL"));
-        config.setSuite(properties.getProperty("suite"));
+        config.setSuiteDir(properties.getProperty("suiteDir"));
+        config.setSuiteRepo(properties.getProperty("suiteRepo"));
+        config
+                .setSuiteRepoUsername(properties
+                        .getProperty("suiteRepoUsername"));
+        config
+                .setSuiteRepoPassword(properties
+                        .getProperty("suiteRepoPassword"));
         config.setGenerateSuite(Boolean.parseBoolean(properties
                 .getProperty("generateSuite")));
-        config.setResult(properties.getProperty("result"));
+        config.setResultDir(properties.getProperty("resultDir"));
 
         if ((temp = properties.getProperty("timeout")) != null) {
             config.setTimeoutInSeconds(Integer.parseInt(temp));
@@ -117,10 +129,44 @@ public class AutoExecServer {
 
     /**
      * 
+     * @throws SVNException 
+     * @throws IOException 
      */
-    public void process() {
+    public void process() throws IOException, SVNException {
 
         log.info("process start.");
+
+        // svn export
+        if (config.getSuiteRepo() != null) {
+            exportSuiteRepository();
+        }
+
         // TODO
+    }
+
+    /**
+     * @throws IOException
+     * @throws SVNException
+     */
+    private void exportSuiteRepository() throws IOException, SVNException {
+
+        log.info("suite export start. repository="
+                + config.getSuiteRepo());
+        cleanSuiteDir();
+
+        SVNUtils.export(config.getSuiteRepo(), config.getSuiteDir(), config
+                .getSuiteRepoUsername(), config.getSuiteRepoPassword());
+        log.info("suite export end.");
+    }
+
+    /**
+     * @throws IOException
+     */
+    private void cleanSuiteDir() throws IOException {
+        File suiteDir = new File(config.getSuiteDir());
+        if (suiteDir.exists()) {
+            log.info("delete suite directory.");
+            FileUtils.deleteDirectory(suiteDir);
+        }
     }
 }
