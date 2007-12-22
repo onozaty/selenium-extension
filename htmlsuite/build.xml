@@ -13,12 +13,11 @@
   <property name="jar.dir" value="./" />
 
   <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
-  <property name="jar.version" value="0.1" />
+  <property name="jar.version" value="0.2-SNAPSHOT" />
 
   <property name="main.class" value="com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner" />
   <property name="jar.class.path" value="./selenium-server.jar" />
 
-  <!-- コンパイル時クラスパス設定 -->
   <path id="class.path">
     <fileset dir="${lib.dir}">
       <include name="**/*.jar" />
