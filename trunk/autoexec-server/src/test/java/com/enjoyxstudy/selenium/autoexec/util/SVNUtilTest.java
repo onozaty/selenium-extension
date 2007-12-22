@@ -26,6 +26,6 @@ public class SVNUtilTest extends TestCase {
         SVNUtils
                 .export(
                         "http://selenium-extension.googlecode.com/svn/trunk/user-extension",
-                        "work/user-extension", null, null);
+                        new File("work/user-extension"), null, null);
     }
 }
