@@ -26,7 +26,7 @@ public final class SVNUtils {
      * @param password
      * @throws SVNException
      */
-    public static void export(String svnUrl, String dist, String userName,
+    public static void export(String svnUrl, File dist, String userName,
             String password) throws SVNException {
 
         setupLibrary();
@@ -34,8 +34,8 @@ public final class SVNUtils {
         SVNUpdateClient client = createSVNClientManager(userName, password)
                 .getUpdateClient();
 
-        client.doExport(SVNURL.parseURIEncoded(svnUrl), new File(dist),
-                SVNRevision.HEAD, SVNRevision.HEAD, null, false, true);
+        client.doExport(SVNURL.parseURIEncoded(svnUrl), dist, SVNRevision.HEAD,
+                SVNRevision.HEAD, null, false, true);
     }
 
     /**

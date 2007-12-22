@@ -11,6 +11,8 @@ import org.tmatesoft.svn.core.SVNException;
 
 import com.enjoyxstudy.selenium.autoexec.util.FileUtils;
 import com.enjoyxstudy.selenium.autoexec.util.SVNUtils;
+import com.enjoyxstudy.selenium.htmlsuite.HTMLSuite;
+import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
 
 /**
  * @author onozaty
@@ -116,7 +118,7 @@ public class AutoExecServer {
 
         seleniumServer.start();
 
-        log.info("selenium server start.");
+        log.info("Start Selenium Server.");
     }
 
     /**
@@ -124,7 +126,7 @@ public class AutoExecServer {
      */
     public void destroy() {
         seleniumServer.stop();
-        log.info("selenium server stop.");
+        log.info("Stop Selenium Server.");
     }
 
     /**
@@ -134,14 +136,79 @@ public class AutoExecServer {
      */
     public void process() throws IOException, SVNException {
 
-        log.info("process start.");
+        log.info("Start test process.");
 
         // svn export
         if (config.getSuiteRepo() != null) {
             exportSuiteRepository();
         }
 
+        // exec test suite
+        MultiHTMLSuiteRunner runner = runTestSuite();
+
         // TODO
+
+        log.info("End test process.");
+    }
+
+    /**
+     * @return MultiHTMLSuiteRunner
+     * @throws IOException
+     */
+    private MultiHTMLSuiteRunner runTestSuite() throws IOException {
+
+        MultiHTMLSuiteRunner htmlSuiteRunner = new MultiHTMLSuiteRunner(
+                seleniumServer);
+        if (config.isGenerateSuite()) {
+            htmlSuiteRunner.addHTMLSuiteGenerate(config.getBrowsers(), config
+                    .getStartURL(), config.getSuiteDir(),
+                    config.getResultDir(), config.getTimeoutInSeconds());
+        } else {
+            htmlSuiteRunner.addHTMLSuites(config.getBrowsers(), config
+                    .getStartURL(), config.getSuiteDir(),
+                    config.getResultDir(), config.getTimeoutInSeconds());
+        }
+
+        htmlSuiteRunner.runHTMLSuites();
+
+        if (htmlSuiteRunner.getResult()) {
+            log.info("HTML Suites passed.");
+        } else {
+            log.info("HTML Suites failed.");
+        }
+
+        int total = 0;
+        int passed = 0;
+        int failed = 0;
+        for (HTMLSuite htmlSuite : htmlSuiteRunner.getHtmlSuiteList()) {
+            total++;
+            if (htmlSuite.isPassed()) {
+                passed++;
+            } else {
+                failed++;
+            }
+        }
+
+        log.info("total: " + total + ", passed: " + passed + ", failed: "
+                + failed);
+        int count = 0;
+        for (HTMLSuite htmlSuite : htmlSuiteRunner.getHtmlSuiteList()) {
+
+            StringBuilder builder = new StringBuilder();
+            builder.append(++count);
+
+            if (htmlSuite.isPassed()) {
+                builder.append(": [passed] ");
+            } else {
+                failed++;
+                builder.append(": [failed] ");
+            }
+            builder.append(htmlSuite.getSuiteFile().getName()).append(" ")
+                    .append(htmlSuite.getBrowser());
+            log.info(builder.toString());
+        }
+
+        return htmlSuiteRunner;
     }
 
     /**
@@ -150,23 +217,20 @@ public class AutoExecServer {
      */
     private void exportSuiteRepository() throws IOException, SVNException {
 
-        log.info("suite export start. repository="
-                + config.getSuiteRepo());
-        cleanSuiteDir();
-
-        SVNUtils.export(config.getSuiteRepo(), config.getSuiteDir(), config
-                .getSuiteRepoUsername(), config.getSuiteRepoPassword());
-        log.info("suite export end.");
-    }
-
-    /**
-     * @throws IOException
-     */
-    private void cleanSuiteDir() throws IOException {
         File suiteDir = new File(config.getSuiteDir());
+        if (!suiteDir.isAbsolute()) {
+            suiteDir = suiteDir.getAbsoluteFile();
+        }
+
         if (suiteDir.exists()) {
-            log.info("delete suite directory.");
+            log.info("Delete suite directory.");
             FileUtils.deleteDirectory(suiteDir);
         }
+
+        SVNUtils.export(config.getSuiteRepo(), suiteDir, config
+                .getSuiteRepoUsername(), config.getSuiteRepoPassword());
+        log.info("Suite Export repository[" + config.getSuiteRepo()
+                + "] dist=[" + suiteDir.getPath() + "]");
     }
+
 }
