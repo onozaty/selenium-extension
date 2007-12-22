@@ -655,12 +655,17 @@ public class MultiHTMLSuiteRunner {
      * @param browser
      * @param resultDirPath
      * @return resultDir
+     * @throws IOException 
      */
-    private File createResultDir(String browser, String resultDirPath) {
+    private File createResultDir(String browser, String resultDirPath)
+            throws IOException {
 
         File resultDir = new File(resultDirPath, browser.substring(1)
                 .replaceAll(" .*", ""));
-        resultDir.mkdir();
+        if (!resultDir.mkdir()) {
+            throw new IOException("Can't make Result dir:"
+                    + resultDir.getAbsolutePath());
+        }
         return resultDir;
     }
 
