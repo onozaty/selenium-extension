@@ -43,77 +43,29 @@ public class AutoExecServer {
      */
     public void startup(Properties properties) throws Exception {
 
-        String temp;
+        config = new Config(properties);
 
-        config = new Config();
-        config.setBrowsers(properties.getProperty("browser").split(","));
-        config.setStartURL(properties.getProperty("startURL"));
-        config.setSuiteDir(properties.getProperty("suiteDir"));
-        config.setSuiteRepo(properties.getProperty("suiteRepo"));
-        config
-                .setSuiteRepoUsername(properties
-                        .getProperty("suiteRepoUsername"));
-        config
-                .setSuiteRepoPassword(properties
-                        .getProperty("suiteRepoPassword"));
-        config.setGenerateSuite(Boolean.parseBoolean(properties
-                .getProperty("generateSuite")));
-        config.setResultDir(properties.getProperty("resultDir"));
+        SeleniumServer.setAvoidProxy(config.isAvoidProxy());
+        SeleniumServer.setDebugMode(config.isDebug());
 
-        if ((temp = properties.getProperty("timeout")) != null) {
-            config.setTimeoutInSeconds(Integer.parseInt(temp));
+        if (config.getLog() != null) {
+            System.setProperty("selenium.log", config.getLog());
         }
 
-        // create server
-        int port = SeleniumServer.getDefaultPort();
-        if ((temp = properties.getProperty("port")) != null) {
-            port = Integer.parseInt(temp);
+        if (config.getProxyHost() != null) {
+            System.setProperty("http.proxyHost", config.getProxyHost());
         }
 
-        boolean multiWindow = false;
-        if ((temp = properties.getProperty("multiWindow")) != null) {
-            multiWindow = Boolean.parseBoolean(temp);
+        if (config.getProxyPort() != null) {
+            System.setProperty("http.proxyPort", config.getProxyPort());
         }
 
-        if ((temp = properties.getProperty("avoidProxy")) != null) {
-            SeleniumServer.setAvoidProxy(Boolean.parseBoolean(temp));
-        }
+        seleniumServer = new SeleniumServer(config.getPort(), false, config
+                .isMultiWindow());
 
-        if ((temp = properties.getProperty("debug")) != null) {
-            SeleniumServer.setDebugMode(Boolean.parseBoolean(temp));
-        }
-
-        if ((temp = properties.getProperty("log")) != null) {
-            System.setProperty("selenium.log", temp);
-        }
-
-        File userExtensions = null;
-        if ((temp = properties.getProperty("userExtensions")) != null) {
-            userExtensions = new File(temp);
-            if (!userExtensions.exists()) {
-                throw new RuntimeException(
-                        "User Extensions file doesn't exist: "
-                                + userExtensions.getAbsolutePath());
-            }
-            if (!"user-extensions.js"
-                    .equalsIgnoreCase(userExtensions.getName())) {
-                throw new RuntimeException(
-                        "User extensions file MUST be called \"user-extensions.js\": "
-                                + userExtensions.getAbsolutePath());
-            }
-        }
-
-        if ((temp = properties.getProperty("proxyHost")) != null) {
-            System.setProperty("http.proxyHost", temp);
-        }
-        if ((temp = properties.getProperty("proxyPort")) != null) {
-            System.setProperty("http.proxyPort", temp);
-        }
-
-        seleniumServer = new SeleniumServer(port, false, multiWindow);
-
-        if (userExtensions != null) {
-            seleniumServer.addNewStaticContent(userExtensions.getParentFile());
+        if (config.getUserExtensions() != null) {
+            seleniumServer.addNewStaticContent(config.getUserExtensions()
+                    .getParentFile());
         }
 
         seleniumServer.start();
