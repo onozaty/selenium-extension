@@ -15,6 +15,16 @@ public class FileUtils {
      */
     public static void deleteDirectory(File directory) throws IOException {
 
+        cleanDirectory(directory);
+        directory.delete();
+    }
+
+    /**
+     * @param directory
+     * @throws IOException
+     */
+    public static void cleanDirectory(File directory) throws IOException {
+
         if (!directory.exists()) {
             String message = directory + " does not exist";
             throw new IllegalArgumentException(message);
@@ -34,6 +44,5 @@ public class FileUtils {
                 file.delete();
             }
         }
-        directory.delete();
     }
 }
