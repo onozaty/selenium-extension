@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/velocity-1.5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/mail-1.4.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
