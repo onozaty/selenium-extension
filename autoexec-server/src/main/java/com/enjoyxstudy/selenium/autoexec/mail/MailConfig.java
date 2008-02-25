@@ -1,9 +1,3 @@
-/* 
- * $Id$
- * 
- * 2007/12/28 : 新規作成
- * 
- */
 package com.enjoyxstudy.selenium.autoexec.mail;
 
 import java.io.BufferedReader;
