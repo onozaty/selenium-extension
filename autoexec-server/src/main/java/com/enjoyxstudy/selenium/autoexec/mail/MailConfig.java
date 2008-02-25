@@ -118,19 +118,19 @@ public class MailConfig {
         try {
             reader = new BufferedReader(new InputStreamReader(inputStream,
                     "UTF-8"));
-        } finally {
-            inputStream.close();
-        }
 
-        try {
             StringBuilder builder = new StringBuilder();
             int ch;
             while ((ch = reader.read()) != -1) {
                 builder.append(ch);
             }
             body = builder.toString();
+
         } finally {
-            reader.close();
+            if (reader != null) {
+                reader.close();
+            }
+            inputStream.close();
         }
 
         ssl = Boolean.parseBoolean(properties.getProperty("mail.ssl"));
