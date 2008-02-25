@@ -44,14 +44,26 @@ public final class TemplateUtils {
     /**
      * @param input
      * @param context
+     * @param out 
+     */
+    public static void merge(String input, Map<String, Object> context,
+            Writer out) {
+
+        StringReader reader = new StringReader(input);
+
+        merge(reader, context, out);
+    }
+
+    /**
+     * @param input
+     * @param context
      * @return string
      */
     public static String merge(String input, Map<String, Object> context) {
 
-        StringReader reader = new StringReader(input);
         StringWriter writer = new StringWriter();
 
-        merge(reader, context, writer);
+        merge(input, context, writer);
 
         return writer.toString();
     }
