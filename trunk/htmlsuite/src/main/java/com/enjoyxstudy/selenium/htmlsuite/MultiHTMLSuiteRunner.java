@@ -48,6 +48,12 @@ public class MultiHTMLSuiteRunner {
     /** result */
     private boolean result;
 
+    /** passedCount */
+    private int passedCount;
+
+    /** failedCount */
+    private int failedCount;
+
     /**
      * @param args
      * @throws Exception 
@@ -177,20 +183,10 @@ public class MultiHTMLSuiteRunner {
                 log.info("HTML Suites failed.");
             }
 
-            int total = 0;
-            int passed = 0;
-            int failed = 0;
-            for (HTMLSuite htmlSuite : htmlSuiteRunner.getHtmlSuiteList()) {
-                total++;
-                if (htmlSuite.isPassed()) {
-                    passed++;
-                } else {
-                    failed++;
-                }
-            }
+            log.info("total: " + htmlSuiteRunner.getHtmlSuiteList().size()
+                    + ", passed: " + htmlSuiteRunner.getPassedCount()
+                    + ", failed: " + htmlSuiteRunner.getFailedCount());
 
-            log.info("total: " + total + ", passed: " + passed + ", failed: "
-                    + failed);
             int count = 0;
             for (HTMLSuite htmlSuite : htmlSuiteRunner.getHtmlSuiteList()) {
 
@@ -200,7 +196,6 @@ public class MultiHTMLSuiteRunner {
                 if (htmlSuite.isPassed()) {
                     builder.append(": [passed] ");
                 } else {
-                    failed++;
                     builder.append(": [failed] ");
                 }
                 builder.append(htmlSuite.getSuiteFile().getName()).append(" ")
@@ -500,7 +495,7 @@ public class MultiHTMLSuiteRunner {
 
         HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
 
-        result = true;
+        boolean tempResult = true;
         for (HTMLSuite htmlSuite : htmlSuiteList) {
             boolean passed = false;
             if (htmlSuite.getResultFile() != null) {
@@ -513,10 +508,17 @@ public class MultiHTMLSuiteRunner {
                         htmlSuite.getBrowserURL(), htmlSuite.getSuiteFile(),
                         htmlSuite.getTimeoutInSeconds());
             }
-            result = result && passed;
             htmlSuite.setTestResults(launcher.getResults());
             htmlSuite.setPassed(passed);
+
+            if (passed) {
+                passedCount++;
+            } else {
+                failedCount++;
+                tempResult = false;
+            }
         }
+        result = tempResult;
         return result;
     }
 
@@ -662,9 +664,11 @@ public class MultiHTMLSuiteRunner {
 
         File resultDir = new File(resultDirPath, browser.substring(1)
                 .replaceAll(" .*", ""));
-        if (!resultDir.mkdir()) {
-            throw new IOException("Can't make Result dir:"
-                    + resultDir.getAbsolutePath());
+        if (!resultDir.exists() || !resultDir.isDirectory()) {
+            if (!resultDir.mkdir()) {
+                throw new IOException("Can't make Result dir:"
+                        + resultDir.getAbsolutePath());
+            }
         }
         return resultDir;
     }
@@ -681,5 +685,19 @@ public class MultiHTMLSuiteRunner {
      */
     public boolean getResult() {
         return result;
+    }
+
+    /**
+     * @return failedCount
+     */
+    public int getFailedCount() {
+        return failedCount;
+    }
+
+    /**
+     * @return passedCount
+     */
+    public int getPassedCount() {
+        return passedCount;
     }
 }
