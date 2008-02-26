@@ -54,6 +54,12 @@ public class MultiHTMLSuiteRunner {
     /** failedCount */
     private int failedCount;
 
+    /** start time */
+    private long startTime;
+
+    /** end time */
+    private long endTime;
+
     /**
      * @param args
      * @throws Exception 
@@ -493,6 +499,8 @@ public class MultiHTMLSuiteRunner {
      */
     public boolean runHTMLSuites() throws IOException {
 
+        startTime = System.currentTimeMillis();
+
         HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
 
         boolean tempResult = true;
@@ -518,6 +526,8 @@ public class MultiHTMLSuiteRunner {
                 tempResult = false;
             }
         }
+        endTime = System.currentTimeMillis();
+
         result = tempResult;
         return result;
     }
@@ -699,5 +709,19 @@ public class MultiHTMLSuiteRunner {
      */
     public int getPassedCount() {
         return passedCount;
+    }
+
+    /**
+     * @return endTime
+     */
+    public long getEndTime() {
+        return endTime;
+    }
+
+    /**
+     * @return startTime
+     */
+    public long getStartTime() {
+        return startTime;
     }
 }
