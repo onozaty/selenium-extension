@@ -54,6 +54,9 @@ public class MailConfig {
     /** debug */
     private boolean debug;
 
+    /** BUF_SIZE */
+    private static final int BUF_SIZE = 1024;
+
     /**
      * 
      */
@@ -114,10 +117,13 @@ public class MailConfig {
                     "UTF-8"));
 
             StringBuilder builder = new StringBuilder();
-            int ch;
-            while ((ch = reader.read()) != -1) {
-                builder.append(ch);
+            char[] buf = new char[BUF_SIZE];
+            int bufSize = 0;
+
+            while ((bufSize = reader.read(buf, 0, BUF_SIZE)) != -1) {
+                builder.append(buf, 0, bufSize);
             }
+
             body = builder.toString();
 
         } finally {
