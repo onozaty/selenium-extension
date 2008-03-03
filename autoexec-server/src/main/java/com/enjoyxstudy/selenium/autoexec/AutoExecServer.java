@@ -28,6 +28,9 @@ public class AutoExecServer {
     /** seleniumServer */
     private SeleniumServer seleniumServer;
 
+    /** resultIndexHtmlWriter */
+    private static final ResultIndexHtmlWriter resultIndexHtmlWriter = new ResultIndexHtmlWriter();
+
     /**
      * @param args
      */
@@ -97,6 +100,11 @@ public class AutoExecServer {
 
         // exec test suite
         MultiHTMLSuiteRunner runner = runTestSuite();
+
+        // write result index.html
+        writeResultIndexHtml(runner);
+
+        // send result mail
 
         // TODO
 
@@ -183,6 +191,16 @@ public class AutoExecServer {
                 .getSuiteRepoUsername(), config.getSuiteRepoPassword());
         log.info("Suite Export repository[" + config.getSuiteRepo()
                 + "] dist=[" + suiteDir.getPath() + "]");
+    }
+
+    /**
+     * @param runner
+     * @throws IOException 
+     */
+    private void writeResultIndexHtml(MultiHTMLSuiteRunner runner)
+            throws IOException {
+
+        resultIndexHtmlWriter.write(config.getResultDir(), runner);
     }
 
 }
