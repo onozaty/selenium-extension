@@ -52,38 +52,65 @@
     <h1>Test results</h1>
 
     <table>
-      <tr>
-        <th colspan="2">result</th>
-        <td>
+      <tbody>
+        <tr>
+          <th colspan="2">result</th>
+          <td>
 #if($result)
-          passed
+            passed
 #else
-          failed
+            failed
 #end
-        </td>
-      </tr>
-      <tr>
-        <th rowspan="3">detail</th>
-        <th>passed</th>
-        <td>${passedCount}</td>
-      </tr>
-      <tr>
-        <th>failed</th>
-        <td>${failedCount}</td>
-      </tr>
-      <tr>
-        <th>total</th>
-        <td>${totalCount}</td>
-      </tr>
-      <tr>
-        <th rowspan="2">time</th>
-        <th>start</th>
-        <td>${startTime}</td>
-      </tr>
-      <tr>
-        <th>end</th>
-        <td>${endTime}</td>
-      </tr>
+          </td>
+        </tr>
+        <tr>
+          <th rowspan="3">detail</th>
+          <th>passed</th>
+          <td>${passedCount}</td>
+        </tr>
+        <tr>
+          <th>failed</th>
+          <td>${failedCount}</td>
+        </tr>
+        <tr>
+          <th>total</th>
+          <td>${totalCount}</td>
+        </tr>
+        <tr>
+          <th rowspan="2">time</th>
+          <th>start</th>
+          <td>${startTime}</td>
+        </tr>
+        <tr>
+          <th>end</th>
+          <td>${endTime}</td>
+        </tr>
+      </tbody>
     </table>
+    <br />
+    <table>
+      <tbody>
+        <tr>
+          <th>suite result file</th>
+          <th>result</th>
+        </tr>
+#foreach($htmlSuite in $htmlSuites)
+        <tr>
+          <td>
+#set($filePath = "$htmlSuite.resultFile.parentFile.name/$htmlSuite.resultFile.name")
+            <a href="${filePath}">${filePath}</a>
+          </td>
+          <td>
+#if($htmlSuite.passed)
+            passed
+#else
+            failed
+#end
+          </td>
+        </tr>
+#end
+      </tbody>
+    </table>
+
   </body>
 </html>
