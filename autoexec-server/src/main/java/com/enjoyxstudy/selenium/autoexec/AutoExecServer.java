@@ -9,6 +9,8 @@ import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.SeleniumServer;
 import org.tmatesoft.svn.core.SVNException;
 
+import com.enjoyxstudy.selenium.autoexec.mail.MailConfig;
+import com.enjoyxstudy.selenium.autoexec.mail.MailSender;
 import com.enjoyxstudy.selenium.autoexec.util.FileUtils;
 import com.enjoyxstudy.selenium.autoexec.util.SVNUtils;
 import com.enjoyxstudy.selenium.htmlsuite.HTMLSuite;
@@ -24,6 +26,9 @@ public class AutoExecServer {
 
     /** config */
     private Config config;
+
+    /** mailConfig */
+    private MailConfig mailConfig;
 
     /** seleniumServer */
     private SeleniumServer seleniumServer;
@@ -71,6 +76,8 @@ public class AutoExecServer {
                     .getParentFile());
         }
 
+        mailConfig = new MailConfig(properties);
+
         seleniumServer.start();
 
         log.info("Start Selenium Server.");
@@ -86,10 +93,9 @@ public class AutoExecServer {
 
     /**
      * 
-     * @throws SVNException 
-     * @throws IOException 
+     * @throws Exception 
      */
-    public void process() throws IOException, SVNException {
+    public void process() throws Exception {
 
         log.info("Start test process.");
 
@@ -105,6 +111,10 @@ public class AutoExecServer {
         writeResultIndexHtml(runner);
 
         // send result mail
+        if (mailConfig.getHost() != null && !mailConfig.getHost().equals("")) {
+            MailSender mailSender = new MailSender(mailConfig);
+            mailSender.send(runner, new File(config.getResultDir()));
+        }
 
         // TODO
 

@@ -25,7 +25,7 @@ import org.mortbay.log.LogFactory;
 
 import com.enjoyxstudy.selenium.autoexec.util.TemplateUtils;
 import com.enjoyxstudy.selenium.autoexec.util.ZipUtils;
-import com.enjoyxstudy.selenium.htmlsuite.HTMLSuite;
+import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
 
 /**
  * @author onozaty
@@ -90,13 +90,12 @@ public class MailSender {
     }
 
     /**
-     * @param result
-     * @param htmlSuites
+     * @param runner 
      * @param resultDir
      * @throws MessagingException
      * @throws IOException 
      */
-    public void send(boolean result, HTMLSuite[] htmlSuites, File resultDir)
+    public void send(MultiHTMLSuiteRunner runner, File resultDir)
             throws MessagingException, IOException {
 
         MimeMessage mimeMessage = new MimeMessage(session);
@@ -111,8 +110,15 @@ public class MailSender {
         mimeMessage.setFrom(new InternetAddress(config.getFrom()));
 
         HashMap<String, Object> context = new HashMap<String, Object>();
-        context.put("result", Boolean.valueOf(result));
-        context.put("htmlSuites", htmlSuites);
+        context.put("result", Boolean.valueOf(runner.getResult()));
+        context.put("passedCount", new Integer(runner.getPassedCount()));
+        context.put("failedCount", new Integer(runner.getFailedCount()));
+        context
+                .put("totalCount",
+                        new Integer(runner.getHtmlSuiteList().size()));
+        context.put("startTime", new Date(runner.getStartTime()));
+        context.put("endTime", new Date(runner.getEndTime()));
+        context.put("htmlSuites", runner.getHtmlSuiteList());
 
         // subject
         mimeMessage.setSubject(TemplateUtils
