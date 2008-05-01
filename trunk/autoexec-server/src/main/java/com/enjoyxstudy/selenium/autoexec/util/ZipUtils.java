@@ -11,7 +11,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author onozaty
  */
-public class ZipUtils {
+public final class ZipUtils {
 
     /** BUF_SIZE */
     private static final int BUF_SIZE = 1024;

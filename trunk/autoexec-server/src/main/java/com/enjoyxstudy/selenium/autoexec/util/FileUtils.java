@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * @author onozaty
  */
-public class FileUtils {
+public final class FileUtils {
 
     /**
      * delete directory
