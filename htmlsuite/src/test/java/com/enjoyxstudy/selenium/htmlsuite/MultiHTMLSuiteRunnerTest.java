@@ -38,18 +38,13 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
             runner.addHTMLSuites("*firefox", "http://search.yahoo.com/",
-                    new String[] { "suite/suite1.html", "suite/suite2.html" },
-                    30);
+                    new String[] { "suite/suite1.html" }, 30);
 
             assertTrue(runner.runHTMLSuites());
-            assertEquals(2, runner.getHtmlSuiteList().size());
+            assertEquals(1, runner.getHtmlSuiteList().size());
             assertEquals("suite1.html", runner.getHtmlSuiteList().get(0)
                     .getSuiteFile().getName());
             assertEquals("passed", runner.getHtmlSuiteList().get(0)
-                    .getTestResults().getResult());
-            assertEquals("suite2.html", runner.getHtmlSuiteList().get(1)
-                    .getSuiteFile().getName());
-            assertEquals("passed", runner.getHtmlSuiteList().get(1)
                     .getTestResults().getResult());
 
         } finally {
@@ -128,91 +123,10 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testAddHTMLSuitesDir1() throws Exception {
-
-        SeleniumServer server = new SeleniumServer();
-
-        try {
-            server.start();
-            MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuiteDir("*firefox", "http://search.yahoo.com/",
-                    "suite", 30);
-
-            assertTrue(runner.runHTMLSuites());
-            assertEquals(3, runner.getHtmlSuiteList().size());
-            assertEquals("suite1.html", runner.getHtmlSuiteList().get(0)
-                    .getSuiteFile().getName());
-            assertEquals("passed", runner.getHtmlSuiteList().get(0)
-                    .getTestResults().getResult());
-            assertEquals("suite2.html", runner.getHtmlSuiteList().get(1)
-                    .getSuiteFile().getName());
-            assertEquals("passed", runner.getHtmlSuiteList().get(1)
-                    .getTestResults().getResult());
-            assertEquals("suite3.html", runner.getHtmlSuiteList().get(2)
-                    .getSuiteFile().getName());
-            assertEquals("passed", runner.getHtmlSuiteList().get(2)
-                    .getTestResults().getResult());
-            assertNull(runner.getHtmlSuiteList().get(2).getResultFile());
-
-        } finally {
-            server.stop();
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public void testAddHTMLSuitesDir2() throws Exception {
-
-        String resultFile1 = "result/suite1_result.html";
-        new File(resultFile1).delete();
-        String resultFile2 = "result/suite2_result.html";
-        new File(resultFile2).delete();
-        String resultFile3 = "result/suite3_result.html";
-        new File(resultFile3).delete();
-
-        SeleniumServer server = new SeleniumServer();
-
-        try {
-            server.start();
-            MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuiteDir("*firefox", "http://search.yahoo.com/",
-                    "suite", "result", 30);
-
-            assertTrue(runner.runHTMLSuites());
-            assertEquals(3, runner.getHtmlSuiteList().size());
-
-            assertTrue(runner.runHTMLSuites());
-            assertEquals(3, runner.getHtmlSuiteList().size());
-            assertEquals("suite1.html", runner.getHtmlSuiteList().get(0)
-                    .getSuiteFile().getName());
-            assertEquals("passed", runner.getHtmlSuiteList().get(0)
-                    .getTestResults().getResult());
-            assertTrue(new File(resultFile1).exists());
-
-            assertEquals("suite2.html", runner.getHtmlSuiteList().get(1)
-                    .getSuiteFile().getName());
-            assertEquals("passed", runner.getHtmlSuiteList().get(1)
-                    .getTestResults().getResult());
-            assertTrue(new File(resultFile2).exists());
-
-            assertEquals("suite3.html", runner.getHtmlSuiteList().get(2)
-                    .getSuiteFile().getName());
-            assertEquals("passed", runner.getHtmlSuiteList().get(2)
-                    .getTestResults().getResult());
-            assertEquals("suite3_result.html", runner.getHtmlSuiteList().get(2)
-                    .getResultFile().getName());
-            assertTrue(new File(resultFile3).exists());
-
-        } finally {
-            server.stop();
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
     public void testAddHTMLSuites4() throws Exception {
+
+        String suiteFile = "suite/generatedTestSuite.html";
+        new File(suiteFile).delete();
 
         SeleniumServer server = new SeleniumServer();
 
@@ -279,59 +193,6 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
      */
     public void testAddHTMLSuites5() throws Exception {
 
-        String resultFile1 = "result/iexplore/suite1_result.html";
-        new File(resultFile1).delete();
-        String resultFile2 = "result/firefox/suite2_result.html";
-        new File(resultFile2).delete();
-        String resultFile3 = "result/opera/suite3_result.html";
-        new File(resultFile3).delete();
-
-        SeleniumServer server = new SeleniumServer();
-
-        try {
-            server.start();
-            MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuites(new String[] { "*iexplore", "*firefox",
-                    "*opera" }, "http://search.yahoo.com/", "suite", "result",
-                    30);
-
-            assertTrue(runner.runHTMLSuites());
-            assertEquals(9, runner.getHtmlSuiteList().size());
-
-            assertEquals("suite1.html", runner.getHtmlSuiteList().get(0)
-                    .getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(0)
-                    .getBrowser());
-            assertEquals("passed", runner.getHtmlSuiteList().get(0)
-                    .getTestResults().getResult());
-            assertTrue(new File(resultFile1).exists());
-
-            assertEquals("suite1.html", runner.getHtmlSuiteList().get(3)
-                    .getSuiteFile().getName());
-            assertEquals("*firefox", runner.getHtmlSuiteList().get(3)
-                    .getBrowser());
-            assertEquals("passed", runner.getHtmlSuiteList().get(3)
-                    .getTestResults().getResult());
-            assertTrue(new File(resultFile2).exists());
-
-            assertEquals("suite1.html", runner.getHtmlSuiteList().get(6)
-                    .getSuiteFile().getName());
-            assertEquals("*opera", runner.getHtmlSuiteList().get(6)
-                    .getBrowser());
-            assertEquals("passed", runner.getHtmlSuiteList().get(6)
-                    .getTestResults().getResult());
-            assertTrue(new File(resultFile3).exists());
-
-        } finally {
-            server.stop();
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public void testAddHTMLSuites6() throws Exception {
-
         SeleniumServer server = new SeleniumServer();
 
         try {
@@ -358,7 +219,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testAddHTMLSuites7() throws Exception {
+    public void testAddHTMLSuites6() throws Exception {
 
         String resultFile1 = "result/iexplore/suite1_result.html";
         new File(resultFile1).delete();
@@ -392,6 +253,96 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
             assertEquals("passed", runner.getHtmlSuiteList().get(1)
                     .getTestResults().getResult());
             assertTrue(new File(resultFile2).exists());
+
+        } finally {
+            server.stop();
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testAddHTMLSuitesDir1() throws Exception {
+
+        String suiteFile = "suite/generatedTestSuite.html";
+        new File(suiteFile).delete();
+
+        SeleniumServer server = new SeleniumServer();
+
+        try {
+            server.start();
+            MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
+            runner.addHTMLSuiteDir("*firefox", "http://search.yahoo.com/",
+                    "suite", 30);
+
+            assertTrue(runner.runHTMLSuites());
+            assertEquals(3, runner.getHtmlSuiteList().size());
+            assertEquals("suite1.html", runner.getHtmlSuiteList().get(0)
+                    .getSuiteFile().getName());
+            assertEquals("passed", runner.getHtmlSuiteList().get(0)
+                    .getTestResults().getResult());
+            assertEquals("suite2.html", runner.getHtmlSuiteList().get(1)
+                    .getSuiteFile().getName());
+            assertEquals("passed", runner.getHtmlSuiteList().get(1)
+                    .getTestResults().getResult());
+            assertEquals("suite3.html", runner.getHtmlSuiteList().get(2)
+                    .getSuiteFile().getName());
+            assertEquals("passed", runner.getHtmlSuiteList().get(2)
+                    .getTestResults().getResult());
+            assertNull(runner.getHtmlSuiteList().get(2).getResultFile());
+
+        } finally {
+            server.stop();
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testAddHTMLSuitesDir2() throws Exception {
+
+        String suiteFile = "suite/generatedTestSuite.html";
+        new File(suiteFile).delete();
+
+        String resultFile1 = "result/suite1_result.html";
+        new File(resultFile1).delete();
+        String resultFile2 = "result/suite2_result.html";
+        new File(resultFile2).delete();
+        String resultFile3 = "result/suite3_result.html";
+        new File(resultFile3).delete();
+
+        SeleniumServer server = new SeleniumServer();
+
+        try {
+            server.start();
+            MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
+            runner.addHTMLSuiteDir("*firefox", "http://search.yahoo.com/",
+                    "suite", "result", 30);
+
+            assertTrue(runner.runHTMLSuites());
+            assertEquals(3, runner.getHtmlSuiteList().size());
+
+            assertTrue(runner.runHTMLSuites());
+            assertEquals(3, runner.getHtmlSuiteList().size());
+            assertEquals("suite1.html", runner.getHtmlSuiteList().get(0)
+                    .getSuiteFile().getName());
+            assertEquals("passed", runner.getHtmlSuiteList().get(0)
+                    .getTestResults().getResult());
+            assertTrue(new File(resultFile1).exists());
+
+            assertEquals("suite2.html", runner.getHtmlSuiteList().get(1)
+                    .getSuiteFile().getName());
+            assertEquals("passed", runner.getHtmlSuiteList().get(1)
+                    .getTestResults().getResult());
+            assertTrue(new File(resultFile2).exists());
+
+            assertEquals("suite3.html", runner.getHtmlSuiteList().get(2)
+                    .getSuiteFile().getName());
+            assertEquals("passed", runner.getHtmlSuiteList().get(2)
+                    .getTestResults().getResult());
+            assertEquals("suite3_result.html", runner.getHtmlSuiteList().get(2)
+                    .getResultFile().getName());
+            assertTrue(new File(resultFile3).exists());
 
         } finally {
             server.stop();
