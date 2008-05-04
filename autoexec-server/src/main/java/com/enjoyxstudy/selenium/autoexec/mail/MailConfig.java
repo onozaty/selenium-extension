@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import com.enjoyxstudy.selenium.htmlsuite.util.PropertiesUtils;
+
 /**
  * @author onozaty
  */
@@ -43,7 +45,7 @@ public class MailConfig {
     private String from;
 
     /** subject */
-    private String subject;
+    private String subject = "Selenium Test Report #if($result)[passed]#else[failed]#end";
 
     /** body */
     private String body;
@@ -70,44 +72,34 @@ public class MailConfig {
      */
     public MailConfig(Properties properties) throws IOException {
 
-        String temp;
-        if ((temp = properties.getProperty("mail.protocol")) != null) {
-            protocol = temp;
-        }
+        protocol = PropertiesUtils.getString(properties, "mail.protocol",
+                protocol);
 
-        host = properties.getProperty("mail.host");
+        host = PropertiesUtils.getString(properties, "mail.host", host);
+        port = PropertiesUtils.getInt(properties, "mail.port", port);
 
-        if ((temp = properties.getProperty("mail.port")) != null) {
-            port = Integer.parseInt(temp);
-        }
-        if ((temp = properties.getProperty("mail.connectionTimeout")) != null) {
-            connectionTimeout = Integer.parseInt(temp);
-        }
-        if ((temp = properties.getProperty("mail.readTimeout")) != null) {
-            readTimeout = Integer.parseInt(temp);
-        }
+        connectionTimeout = PropertiesUtils.getInt(properties,
+                "mail.connectionTimeout", connectionTimeout);
+        readTimeout = PropertiesUtils.getInt(properties, "mail.readTimeout",
+                readTimeout);
 
-        username = properties.getProperty("mail.username");
-        password = properties.getProperty("mail.password");
+        username = PropertiesUtils.getString(properties, "mail.username");
+        password = PropertiesUtils.getString(properties, "mail.password");
 
-        if ((temp = properties.getProperty("mail.charset")) != null) {
-            charset = temp;
-        }
+        charset = PropertiesUtils
+                .getString(properties, "mail.charset", charset);
 
-        if ((temp = properties.getProperty("mail.to")) != null) {
-            to = temp;
-        }
-        if ((temp = properties.getProperty("mail.from")) != null) {
-            from = temp;
-        }
-        if ((temp = properties.getProperty("mail.subject")) != null) {
-            subject = temp;
-        }
+        to = PropertiesUtils.getString(properties, "mail.to", to);
+        from = PropertiesUtils.getString(properties, "mail.from", from);
+        subject = PropertiesUtils
+                .getString(properties, "mail.subject", subject);
 
         InputStream inputStream = null;
         BufferedReader reader = null;
-        if ((temp = properties.getProperty("mail.bodyPath")) != null) {
-            inputStream = new FileInputStream(temp);
+        String bodyPath = PropertiesUtils
+                .getString(properties, "mail.bodyPath");
+        if (bodyPath != null) {
+            inputStream = new FileInputStream(bodyPath);
         } else {
             inputStream = this.getClass().getResourceAsStream(
                     "mailBodyTemplate.txt");
@@ -133,8 +125,8 @@ public class MailConfig {
             inputStream.close();
         }
 
-        ssl = Boolean.parseBoolean(properties.getProperty("mail.ssl"));
-        debug = Boolean.parseBoolean(properties.getProperty("mail.debug"));
+        ssl = PropertiesUtils.getBoolean(properties, "mail.ssl", ssl);
+        debug = PropertiesUtils.getBoolean(properties, "mail.debug", debug);
     }
 
     /**
