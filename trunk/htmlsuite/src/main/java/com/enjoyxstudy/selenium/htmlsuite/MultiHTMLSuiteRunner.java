@@ -31,6 +31,8 @@ import org.apache.commons.logging.Log;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.SeleniumServer;
 
+import com.enjoyxstudy.selenium.htmlsuite.util.PropertiesUtils;
+
 /**
  * @author onozaty
  */
@@ -91,40 +93,38 @@ public class MultiHTMLSuiteRunner {
     public static MultiHTMLSuiteRunner execute(Properties properties)
             throws Exception {
 
-        String temp;
+        String[] browsers = PropertiesUtils.getString(properties, "browser")
+                .split(",");
+        String startURL = PropertiesUtils.getString(properties, "startURL");
+        String suite = PropertiesUtils.getString(properties, "suite");
+        boolean generateSuite = PropertiesUtils.getBoolean(properties,
+                "generateSuite");
+        String result = PropertiesUtils.getString(properties, "result");
 
-        String[] browsers = properties.getProperty("browser").split(",");
-        String startURL = properties.getProperty("startURL");
-        String suite = properties.getProperty("suite");
-        boolean generateSuite = Boolean.parseBoolean(properties
-                .getProperty("generateSuite"));
-        String result = properties.getProperty("result");
+        int port = PropertiesUtils.getInt(properties, "port", SeleniumServer
+                .getDefaultPort());
 
-        int port = SeleniumServer.getDefaultPort();
-        if ((temp = properties.getProperty("port")) != null) {
-            port = Integer.parseInt(temp);
+        boolean multiWindow = PropertiesUtils.getBoolean(properties,
+                "multiWindow");
+
+        if (PropertiesUtils.getBoolean(properties, "avoidProxy")) {
+            SeleniumServer.setAvoidProxy(true);
         }
 
-        boolean multiWindow = false;
-        if ((temp = properties.getProperty("multiWindow")) != null) {
-            multiWindow = Boolean.parseBoolean(temp);
+        if (PropertiesUtils.getBoolean(properties, "debug")) {
+            SeleniumServer.setDebugMode(true);
         }
 
-        if ((temp = properties.getProperty("avoidProxy")) != null) {
-            SeleniumServer.setAvoidProxy(Boolean.parseBoolean(temp));
-        }
-
-        if ((temp = properties.getProperty("debug")) != null) {
-            SeleniumServer.setDebugMode(Boolean.parseBoolean(temp));
-        }
-
-        if ((temp = properties.getProperty("log")) != null) {
-            System.setProperty("selenium.log", temp);
+        String logFileName = PropertiesUtils.getString(properties, "log");
+        if (logFileName != null) {
+            System.setProperty("selenium.log", logFileName);
         }
 
         File userExtensions = null;
-        if ((temp = properties.getProperty("userExtensions")) != null) {
-            userExtensions = new File(temp);
+        String userExtensionsName = PropertiesUtils.getString(properties,
+                "userExtensions");
+        if (userExtensionsName != null) {
+            userExtensions = new File(userExtensionsName);
             if (!userExtensions.exists()) {
                 throw new RuntimeException(
                         "User Extensions file doesn't exist: "
@@ -138,16 +138,16 @@ public class MultiHTMLSuiteRunner {
             }
         }
 
-        int timeoutInSeconds = 60 * 60;
-        if ((temp = properties.getProperty("timeout")) != null) {
-            timeoutInSeconds = Integer.parseInt(temp);
-        }
+        int timeoutInSeconds = PropertiesUtils.getInt(properties, "timeout",
+                60 * 60);
 
-        if ((temp = properties.getProperty("proxyHost")) != null) {
-            System.setProperty("http.proxyHost", temp);
+        String proxyHost = PropertiesUtils.getString(properties, "proxyHost");
+        if (proxyHost != null) {
+            System.setProperty("http.proxyHost", proxyHost);
         }
-        if ((temp = properties.getProperty("proxyPort")) != null) {
-            System.setProperty("http.proxyPort", temp);
+        String proxyPort = PropertiesUtils.getString(properties, "proxyPort");
+        if (proxyPort != null) {
+            System.setProperty("http.proxyPort", proxyPort);
         }
 
         SeleniumServer seleniumServer = new SeleniumServer(port, false,
