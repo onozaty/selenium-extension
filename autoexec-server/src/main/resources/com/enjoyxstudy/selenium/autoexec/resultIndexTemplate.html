@@ -54,7 +54,7 @@
     <table>
       <tbody>
         <tr>
-          <th colspan="2">result</th>
+          <th>result</th>
           <td>
 #if($result)
             passed
@@ -64,25 +64,23 @@
           </td>
         </tr>
         <tr>
-          <th rowspan="3">detail</th>
-          <th>passed</th>
+          <th>passed count</th>
           <td>${passedCount}</td>
         </tr>
         <tr>
-          <th>failed</th>
+          <th>failed count</th>
           <td>${failedCount}</td>
         </tr>
         <tr>
-          <th>total</th>
+          <th>total count</th>
           <td>${totalCount}</td>
         </tr>
         <tr>
-          <th rowspan="2">time</th>
-          <th>start</th>
+          <th>start time</th>
           <td>${startTime}</td>
         </tr>
         <tr>
-          <th>end</th>
+          <th>end time</th>
           <td>${endTime}</td>
         </tr>
       </tbody>
