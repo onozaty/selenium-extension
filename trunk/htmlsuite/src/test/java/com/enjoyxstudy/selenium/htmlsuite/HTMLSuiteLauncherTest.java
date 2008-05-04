@@ -38,7 +38,7 @@ public class HTMLSuiteLauncherTest extends TestCase {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
             boolean result = launcher.runHTMLSuite("*firefox",
-                    "http://search.yahoo.com/", "suite/suite1.html", 30);
+                    "http://www.google.com/", "suite/suite1.html", 30);
 
             assertTrue(result);
             assertEquals("passed", launcher.getResults().getResult());
@@ -59,7 +59,7 @@ public class HTMLSuiteLauncherTest extends TestCase {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
             boolean result = launcher.runHTMLSuite("*firefox",
-                    "http://search.yahoo.com/", "suite/failed2.html", 30);
+                    "http://www.google.com/", "suite/failed2.html", 30);
 
             assertFalse(result);
             assertEquals("failed", launcher.getResults().getResult());
@@ -83,8 +83,8 @@ public class HTMLSuiteLauncherTest extends TestCase {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
             boolean result = launcher.runHTMLSuite("*firefox",
-                    "http://search.yahoo.com/", "suite/failed1.html",
-                    resultFile, 30);
+                    "http://www.google.com/", "suite/failed1.html", resultFile,
+                    30);
 
             assertFalse(result);
             assertEquals("failed", launcher.getResults().getResult());
