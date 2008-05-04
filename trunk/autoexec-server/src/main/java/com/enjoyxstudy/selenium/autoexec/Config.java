@@ -5,6 +5,8 @@ import java.util.Properties;
 
 import org.openqa.selenium.server.SeleniumServer;
 
+import com.enjoyxstudy.selenium.htmlsuite.util.PropertiesUtils;
+
 /**
  * @author onozaty
  */
@@ -41,7 +43,7 @@ public class Config {
     private String startURL;
 
     /** suiteDir */
-    private String suiteDir;
+    private String suiteDir = "suite";
 
     /** suiteRepo */
     private String suiteRepo;
@@ -53,10 +55,10 @@ public class Config {
     private String suiteRepoPassword;
 
     /** generateSuite */
-    private boolean generateSuite;
+    private boolean generateSuite = true;
 
     /** resultDir */
-    private String resultDir;
+    private String resultDir = "result";
 
     /** timeoutInSeconds */
     private int timeoutInSeconds = 60 * 60;
@@ -73,22 +75,21 @@ public class Config {
      */
     public Config(Properties properties) {
 
-        String temp;
-        if ((temp = properties.getProperty("port")) != null) {
-            port = Integer.parseInt(temp);
-        }
+        port = PropertiesUtils.getInt(properties, "port", port);
+        multiWindow = PropertiesUtils.getBoolean(properties, "multiWindow",
+                multiWindow);
 
-        multiWindow = Boolean.parseBoolean(properties
-                .getProperty("multiWindow"));
+        avoidProxy = PropertiesUtils.getBoolean(properties, "avoidProxy",
+                avoidProxy);
 
-        avoidProxy = Boolean.parseBoolean(properties.getProperty("avoidProxy"));
+        debug = PropertiesUtils.getBoolean(properties, "debug", debug);
 
-        debug = Boolean.parseBoolean(properties.getProperty("debug"));
+        log = PropertiesUtils.getString(properties, "log", log);
 
-        log = properties.getProperty("log");
-
-        if ((temp = properties.getProperty("userExtensions")) != null) {
-            userExtensions = new File(temp);
+        String userExtensionsName = PropertiesUtils.getString(properties,
+                "userExtensions");
+        if (userExtensionsName != null) {
+            userExtensions = new File(userExtensionsName);
             if (!userExtensions.exists()) {
                 throw new RuntimeException(
                         "User Extensions file doesn't exist: "
@@ -102,22 +103,30 @@ public class Config {
             }
         }
 
-        proxyHost = properties.getProperty("proxyHost");
-        proxyPort = properties.getProperty("proxyPort");
+        proxyHost = PropertiesUtils.getString(properties, "proxyHost",
+                proxyHost);
+        proxyPort = PropertiesUtils.getString(properties, "proxyPort",
+                proxyPort);
 
-        browsers = properties.getProperty("browser").split(",");
-        startURL = properties.getProperty("startURL");
-        suiteDir = properties.getProperty("suiteDir");
-        suiteRepo = properties.getProperty("suiteRepo");
-        suiteRepoUsername = properties.getProperty("suiteRepoUsername");
-        suiteRepoPassword = properties.getProperty("suiteRepoPassword");
-        generateSuite = Boolean.parseBoolean(properties
-                .getProperty("generateSuite"));
-        resultDir = properties.getProperty("resultDir");
+        browsers = PropertiesUtils.getString(properties, "browser").split(",");
+        startURL = PropertiesUtils.getString(properties, "startURL");
 
-        if ((temp = properties.getProperty("timeout")) != null) {
-            timeoutInSeconds = Integer.parseInt(temp);
-        }
+        suiteDir = PropertiesUtils.getString(properties, "suiteDir", suiteDir);
+
+        suiteRepo = PropertiesUtils.getString(properties, "suiteRepo");
+        suiteRepoUsername = PropertiesUtils.getString(properties,
+                "suiteRepoUsername");
+        suiteRepoPassword = PropertiesUtils.getString(properties,
+                "suiteRepoPassword");
+
+        generateSuite = PropertiesUtils.getBoolean(properties, "generateSuite",
+                generateSuite);
+
+        resultDir = PropertiesUtils.getString(properties, "resultDir",
+                resultDir);
+
+        timeoutInSeconds = PropertiesUtils.getInt(properties, "timeout",
+                timeoutInSeconds);
     }
 
     /**
