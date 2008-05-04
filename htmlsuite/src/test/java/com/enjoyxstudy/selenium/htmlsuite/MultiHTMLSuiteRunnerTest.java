@@ -37,7 +37,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuites("*firefox", "http://search.yahoo.com/",
+            runner.addHTMLSuites("*firefox", "http://www.google.com/",
                     new String[] { "suite/suite1.html" }, 30);
 
             assertTrue(runner.runHTMLSuites());
@@ -62,7 +62,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuites("*firefox", "http://search.yahoo.com/",
+            runner.addHTMLSuites("*firefox", "http://www.google.com/",
                     new String[] { "suite/failed1.html", "suite/suite3.html" },
                     30);
 
@@ -97,7 +97,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuites("*firefox", "http://search.yahoo.com/",
+            runner.addHTMLSuites("*firefox", "http://www.google.com/",
                     new String[] { "suite/suite2.html", "suite/suite1.html" },
                     "result", 30);
 
@@ -134,7 +134,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
             runner.addHTMLSuites(new String[] { "*firefox", "*iexplore" },
-                    "http://search.yahoo.com/", "suite", 30);
+                    "http://www.google.com/", "suite", 30);
 
             assertTrue(runner.runHTMLSuites());
             assertEquals(6, runner.getHtmlSuiteList().size());
@@ -199,7 +199,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
             runner.addHTMLSuites(new String[] { "*iexplore", },
-                    "http://search.yahoo.com/", "suite/suite1.html", 30);
+                    "http://www.google.com/", "suite/suite1.html", 30);
 
             assertTrue(runner.runHTMLSuites());
             assertEquals(1, runner.getHtmlSuiteList().size());
@@ -231,9 +231,10 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuites(new String[] { "*iexplore", "*firefox" },
-                    "http://search.yahoo.com/", "suite/suite1.html", "result",
-                    30);
+            runner
+                    .addHTMLSuites(new String[] { "*iexplore", "*firefox" },
+                            "http://www.google.com/", "suite/suite1.html",
+                            "result", 30);
 
             assertTrue(runner.runHTMLSuites());
             assertEquals(2, runner.getHtmlSuiteList().size());
@@ -272,7 +273,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuiteDir("*firefox", "http://search.yahoo.com/",
+            runner.addHTMLSuiteDir("*firefox", "http://www.google.com/",
                     "suite", 30);
 
             assertTrue(runner.runHTMLSuites());
@@ -316,7 +317,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuiteDir("*firefox", "http://search.yahoo.com/",
+            runner.addHTMLSuiteDir("*firefox", "http://www.google.com/",
                     "suite", "result", 30);
 
             assertTrue(runner.runHTMLSuites());
@@ -364,7 +365,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
             runner.addHTMLSuiteGenerate(
                     new String[] { "*firefox", "*iexplore" },
-                    "http://search.yahoo.com/", "suite", 60);
+                    "http://www.google.com/", "suite", 60);
 
             assertFalse(runner.runHTMLSuites());
             assertEquals(2, runner.getHtmlSuiteList().size());
@@ -403,7 +404,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
             runner.addHTMLSuiteGenerate(new String[] { "*iexplore" },
-                    "http://search.yahoo.com/", "suite", "result", 60);
+                    "http://www.google.com/", "suite", "result", 60);
 
             assertFalse(runner.runHTMLSuites());
             assertEquals(1, runner.getHtmlSuiteList().size());
