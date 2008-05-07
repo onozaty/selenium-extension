@@ -1,10 +1,14 @@
 package com.enjoyxstudy.selenium.autoexec;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
+import org.mortbay.http.HttpContext;
+import org.mortbay.http.handler.ResourceHandler;
+import org.mortbay.jetty.Server;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.SeleniumServer;
 import org.tmatesoft.svn.core.SVNException;
@@ -24,6 +28,18 @@ public class AutoExecServer {
     /** logger */
     private static Log log = LogFactory.getLog(AutoExecServer.class);
 
+    /** startup command */
+    private static final String COMMAND_STARTUP = "startup";
+
+    /** shutdown command */
+    private static final String COMMAND_SHUTDOWN = "shutdown";
+
+    /** property file default name */
+    private static final String DEFAULT_PROPERTY_FILE_NAME = "setting.properties";
+
+    /** runningLoop wait time(ms) */
+    private static final int RUNNING_LOOP_WAIT = 1000;
+
     /** config */
     private Config config;
 
@@ -36,11 +52,63 @@ public class AutoExecServer {
     /** resultIndexHtmlWriter */
     private static final ResultIndexHtmlWriter resultIndexHtmlWriter = new ResultIndexHtmlWriter();
 
+    /** stop flag */
+    private boolean isStop;
+
     /**
      * @param args
+     * @throws Exception 
      */
-    public static void main(String[] args) {
-        // TODO
+    public static void main(String[] args) throws Exception {
+
+        String command = null;
+        if (args.length == 0) {
+            command = COMMAND_STARTUP;
+        } else if (args[0].equals(COMMAND_STARTUP)) {
+            command = COMMAND_STARTUP;
+        } else if (args[0].equals(COMMAND_SHUTDOWN)) {
+            command = COMMAND_SHUTDOWN;
+        }
+
+        if (command == null) {
+            throw new IllegalArgumentException();
+        }
+
+        String propertyFile = DEFAULT_PROPERTY_FILE_NAME; // default
+        if (args.length == 2) {
+            propertyFile = args[0];
+        }
+        final Properties properties = new Properties();
+        FileInputStream inputStream = new FileInputStream(propertyFile);
+        try {
+            properties.load(inputStream);
+        } finally {
+            inputStream.close();
+        }
+
+        if (command.equals(COMMAND_STARTUP)) {
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+
+                        AutoExecServer autoExecServer = new AutoExecServer();
+
+                        autoExecServer.startup(properties);
+                        autoExecServer.runningLoop();
+                        autoExecServer.destroy();
+
+                        System.exit(0);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+        } else {
+            // TODO: shutdown use http command
+        }
     }
 
     /**
@@ -78,6 +146,21 @@ public class AutoExecServer {
 
         mailConfig = new MailConfig(properties);
 
+        Server server = seleniumServer.getServer();
+
+        // add context
+        HttpContext commandContext = new HttpContext();
+        commandContext.setContextPath("/selenium-server/autoexec/command");
+        commandContext.setResourceBase(config.getResultDir());
+        commandContext.addHandler(new CommandHandler(this));
+        server.addContext(commandContext);
+
+        HttpContext resultContext = new HttpContext();
+        resultContext.setContextPath("/selenium-server/autoexec/result");
+        resultContext.setResourceBase(config.getResultDir());
+        resultContext.addHandler(new ResourceHandler());
+        server.addContext(resultContext);
+
         seleniumServer.start();
 
         log.info("Start Selenium Server.");
@@ -92,10 +175,12 @@ public class AutoExecServer {
     }
 
     /**
+     * process.
      * 
+     * @return runner
      * @throws Exception 
      */
-    public void process() throws Exception {
+    public MultiHTMLSuiteRunner process() throws Exception {
 
         log.info("Start test process.");
 
@@ -116,9 +201,20 @@ public class AutoExecServer {
             mailSender.send(runner, new File(config.getResultDir()));
         }
 
-        // TODO
-
         log.info("End test process.");
+
+        return runner;
+    }
+
+    /**
+     * 
+     * @throws InterruptedException 
+     */
+    public void runningLoop() throws InterruptedException {
+
+        while (!isStop) {
+            Thread.sleep(RUNNING_LOOP_WAIT);
+        }
     }
 
     /**
@@ -211,6 +307,13 @@ public class AutoExecServer {
             throws IOException {
 
         resultIndexHtmlWriter.write(config.getResultDir(), runner);
+    }
+
+    /**
+     * stop running.
+     */
+    public void runningStop() {
+        isStop = true;
     }
 
 }
