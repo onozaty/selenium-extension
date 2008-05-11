@@ -506,6 +506,8 @@ public class MultiHTMLSuiteRunner {
         boolean tempResult = true;
         for (HTMLSuite htmlSuite : htmlSuiteList) {
             boolean passed = false;
+
+            htmlSuite.setStatus(HTMLSuite.STATUS_RUN);
             if (htmlSuite.getResultFile() != null) {
                 passed = launcher.runHTMLSuite(htmlSuite.getBrowser(),
                         htmlSuite.getBrowserURL(), htmlSuite.getSuiteFile(),
@@ -516,6 +518,8 @@ public class MultiHTMLSuiteRunner {
                         htmlSuite.getBrowserURL(), htmlSuite.getSuiteFile(),
                         htmlSuite.getTimeoutInSeconds());
             }
+            htmlSuite.setStatus(HTMLSuite.STATUS_FINISH);
+
             htmlSuite.setTestResults(launcher.getResults());
             htmlSuite.setPassed(passed);
 
