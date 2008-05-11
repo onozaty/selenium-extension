@@ -29,6 +29,15 @@ public class HTMLSuite implements Serializable {
     /** serialVersionUID */
     private static final long serialVersionUID = -2119102756934000899L;
 
+    /** status wait */
+    public static final int STATUS_WAIT = 0;
+
+    /** status run */
+    public static final int STATUS_RUN = 1;
+
+    /** status finish */
+    public static final int STATUS_FINISH = 2;
+
     /** suiteFile */
     private File suiteFile;
 
@@ -49,6 +58,9 @@ public class HTMLSuite implements Serializable {
 
     /** passed */
     private boolean passed;
+
+    /** status */
+    private int status;
 
     /**
      * @return browser
@@ -146,6 +158,20 @@ public class HTMLSuite implements Serializable {
      */
     public void setPassed(boolean passed) {
         this.passed = passed;
+    }
+
+    /**
+     * @return status
+     */
+    public int getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status status
+     */
+    public void setStatus(int status) {
+        this.status = status;
     }
 
 }
