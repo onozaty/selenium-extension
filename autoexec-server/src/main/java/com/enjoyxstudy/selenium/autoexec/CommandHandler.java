@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -161,8 +162,9 @@ public class CommandHandler implements HttpHandler {
     private void commandStatus(String type, HttpResponse response)
             throws IOException {
 
-        String status = (autoExecServer.getStatus() == AutoExecServer.STATUS_RUNNING) ? "running"
-                : "idle";
+        boolean isRunning = (autoExecServer.getStatus() == AutoExecServer.STATUS_RUNNING);
+
+        String status = isRunning ? "running" : "idle";
 
         if (type.equals(TYPE_TEXT)) {
             // text
@@ -175,18 +177,21 @@ public class CommandHandler implements HttpHandler {
             MultiHTMLSuiteRunner runner = autoExecServer.getRunner();
 
             if (runner != null) {
-                jsonString
-                        .append(", \"result\": ")
-                        .append(
-                                toJSON((autoExecServer.getStatus() == AutoExecServer.STATUS_RUNNING) ? null
-                                        : runner.getResult() ? "passed"
-                                                : "failed"));
+                jsonString.append(", \"result\": ").append(
+                        toJSON(isRunning ? null : runner.getResult() ? "passed"
+                                : "failed"));
                 jsonString.append(", \"totalCount\": ").append(
                         runner.getHtmlSuiteList().size());
                 jsonString.append(", \"passedCount\": ").append(
                         runner.getPassedCount());
                 jsonString.append(", \"failedCount\": ").append(
                         runner.getFailedCount());
+
+                jsonString.append(", \"startTime\": ").append(
+                        toJSON(new Date(runner.getStartTime()).toString()));
+                jsonString.append(", \"endTime\": ").append(
+                        isRunning ? null : toJSON(new Date(runner.getEndTime())
+                                .toString()));
 
                 jsonString.append(", \"suites\": [");
                 boolean first = true;
