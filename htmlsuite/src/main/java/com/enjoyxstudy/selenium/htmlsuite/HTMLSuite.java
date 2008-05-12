@@ -60,7 +60,7 @@ public class HTMLSuite implements Serializable {
     private boolean passed;
 
     /** status */
-    private int status;
+    private int status = STATUS_WAIT;
 
     /**
      * @return browser
