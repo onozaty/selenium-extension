@@ -40,6 +40,18 @@ public class AutoExecServer {
     /** runningLoop wait time(ms) */
     private static final int RUNNING_LOOP_WAIT = 1000;
 
+    /** status idle */
+    public static final int STATUS_IDLE = 0;
+
+    /** status running */
+    public static final int STATUS_RUNNING = 1;
+
+    /** command context path */
+    public static final String CONTEXT_PATH_COMMAND = "/selenium-server/autoexec/command/";
+
+    /** result context path */
+    public static final String CONTEXT_PATH_RESULT = "/selenium-server/autoexec/result/";
+
     /** config */
     private Config config;
 
@@ -52,8 +64,14 @@ public class AutoExecServer {
     /** resultIndexHtmlWriter */
     private static final ResultIndexHtmlWriter resultIndexHtmlWriter = new ResultIndexHtmlWriter();
 
+    /** status */
+    private int status = STATUS_IDLE;
+
     /** stop flag */
     private boolean isStop;
+
+    /** HTMLSuite runner */
+    private MultiHTMLSuiteRunner runner;
 
     /**
      * @param args
@@ -98,10 +116,10 @@ public class AutoExecServer {
                         autoExecServer.runningLoop();
                         autoExecServer.destroy();
 
-                        System.exit(0);
-
                     } catch (Exception e) {
                         e.printStackTrace();
+                    } finally {
+                        System.exit(0);
                     }
                 }
             }).start();
@@ -150,13 +168,13 @@ public class AutoExecServer {
 
         // add context
         HttpContext commandContext = new HttpContext();
-        commandContext.setContextPath("/selenium-server/autoexec/command");
+        commandContext.setContextPath(CONTEXT_PATH_COMMAND);
         commandContext.setResourceBase(config.getResultDir());
         commandContext.addHandler(new CommandHandler(this));
         server.addContext(commandContext);
 
         HttpContext resultContext = new HttpContext();
-        resultContext.setContextPath("/selenium-server/autoexec/result");
+        resultContext.setContextPath(CONTEXT_PATH_RESULT);
         resultContext.setResourceBase(config.getResultDir());
         resultContext.addHandler(new ResourceHandler());
         server.addContext(resultContext);
@@ -177,12 +195,14 @@ public class AutoExecServer {
     /**
      * process.
      * 
-     * @return runner
+     * @return HTMLSuite runner
      * @throws Exception 
      */
-    public MultiHTMLSuiteRunner process() throws Exception {
+    public synchronized MultiHTMLSuiteRunner process() throws Exception {
 
         log.info("Start test process.");
+
+        status = STATUS_RUNNING;
 
         // svn export
         if (config.getSuiteRepo() != null) {
@@ -190,16 +210,18 @@ public class AutoExecServer {
         }
 
         // exec test suite
-        MultiHTMLSuiteRunner runner = runTestSuite();
+        runTestSuite();
 
         // write result index.html
-        writeResultIndexHtml(runner);
+        writeResultIndexHtml();
 
         // send result mail
         if (mailConfig.getHost() != null && !mailConfig.getHost().equals("")) {
             MailSender mailSender = new MailSender(mailConfig);
             mailSender.send(runner, new File(config.getResultDir()));
         }
+
+        status = STATUS_IDLE;
 
         log.info("End test process.");
 
@@ -218,47 +240,35 @@ public class AutoExecServer {
     }
 
     /**
-     * @return MultiHTMLSuiteRunner
      * @throws IOException
      */
-    private MultiHTMLSuiteRunner runTestSuite() throws IOException {
+    private void runTestSuite() throws IOException {
 
-        MultiHTMLSuiteRunner htmlSuiteRunner = new MultiHTMLSuiteRunner(
-                seleniumServer);
+        runner = new MultiHTMLSuiteRunner(seleniumServer);
         if (config.isGenerateSuite()) {
-            htmlSuiteRunner.addHTMLSuiteGenerate(config.getBrowsers(), config
+            runner.addHTMLSuiteGenerate(config.getBrowsers(), config
                     .getStartURL(), config.getSuiteDir(),
                     config.getResultDir(), config.getTimeoutInSeconds());
         } else {
-            htmlSuiteRunner.addHTMLSuites(config.getBrowsers(), config
-                    .getStartURL(), config.getSuiteDir(),
-                    config.getResultDir(), config.getTimeoutInSeconds());
+            runner.addHTMLSuites(config.getBrowsers(), config.getStartURL(),
+                    config.getSuiteDir(), config.getResultDir(), config
+                            .getTimeoutInSeconds());
         }
 
-        htmlSuiteRunner.runHTMLSuites();
+        runner.runHTMLSuites();
 
-        if (htmlSuiteRunner.getResult()) {
+        if (runner.getResult()) {
             log.info("HTML Suites passed.");
         } else {
             log.info("HTML Suites failed.");
         }
 
-        int total = 0;
-        int passed = 0;
-        int failed = 0;
-        for (HTMLSuite htmlSuite : htmlSuiteRunner.getHtmlSuiteList()) {
-            total++;
-            if (htmlSuite.isPassed()) {
-                passed++;
-            } else {
-                failed++;
-            }
-        }
+        log.info("total: " + runner.getHtmlSuiteList().size() + ", passed: "
+                + runner.getPassedCount() + ", failed: "
+                + runner.getFailedCount());
 
-        log.info("total: " + total + ", passed: " + passed + ", failed: "
-                + failed);
         int count = 0;
-        for (HTMLSuite htmlSuite : htmlSuiteRunner.getHtmlSuiteList()) {
+        for (HTMLSuite htmlSuite : runner.getHtmlSuiteList()) {
 
             StringBuilder builder = new StringBuilder();
             builder.append(++count);
@@ -266,7 +276,6 @@ public class AutoExecServer {
             if (htmlSuite.isPassed()) {
                 builder.append(": [passed] ");
             } else {
-                failed++;
                 builder.append(": [failed] ");
             }
             builder.append(htmlSuite.getSuiteFile().getName()).append(" ")
@@ -274,7 +283,6 @@ public class AutoExecServer {
             log.info(builder.toString());
         }
 
-        return htmlSuiteRunner;
     }
 
     /**
@@ -300,11 +308,9 @@ public class AutoExecServer {
     }
 
     /**
-     * @param runner
      * @throws IOException 
      */
-    private void writeResultIndexHtml(MultiHTMLSuiteRunner runner)
-            throws IOException {
+    private void writeResultIndexHtml() throws IOException {
 
         resultIndexHtmlWriter.write(config.getResultDir(), runner);
     }
@@ -314,6 +320,20 @@ public class AutoExecServer {
      */
     public void runningStop() {
         isStop = true;
+    }
+
+    /**
+     * @return status
+     */
+    public int getStatus() {
+        return status;
+    }
+
+    /**
+     * @return runner
+     */
+    public MultiHTMLSuiteRunner getRunner() {
+        return runner;
     }
 
 }

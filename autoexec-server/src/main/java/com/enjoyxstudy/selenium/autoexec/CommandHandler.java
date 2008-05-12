@@ -3,6 +3,7 @@ package com.enjoyxstudy.selenium.autoexec;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import org.mortbay.http.HttpRequest;
 import org.mortbay.http.HttpResponse;
 import org.mortbay.log.LogFactory;
 
+import com.enjoyxstudy.selenium.htmlsuite.HTMLSuite;
 import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
 
 /**
@@ -28,6 +30,18 @@ public class CommandHandler implements HttpHandler {
     /** logger */
     private static Log log = LogFactory.getLog(CommandHandler.class);
 
+    /** type text */
+    private static String TYPE_TEXT = "text";
+
+    /** type json */
+    private static String TYPE_JSON = "json";
+
+    /** content type text */
+    private static final String CONTENT_TYPE_TEXT = "text/plain; charset=utf-8";
+
+    /** content type json */
+    private static final String CONTENT_TYPE_JSON = "application/x-javascript; charset=utf-8";
+
     /** context */
     private HttpContext context;
 
@@ -35,7 +49,7 @@ public class CommandHandler implements HttpHandler {
     private boolean isStarted;
 
     /** autoExecServer */
-    private AutoExecServer autoExecServer;
+    AutoExecServer autoExecServer;
 
     /**
      * @param _autoExecServer
@@ -68,21 +82,68 @@ public class CommandHandler implements HttpHandler {
      * @throws HttpException
      * @throws IOException 
      */
-    private void command(String commandName, @SuppressWarnings("unused")
-    HttpRequest request, HttpResponse response) throws HttpException,
-            IOException {
+    private void command(String commandName, HttpRequest request,
+            HttpResponse response) throws HttpException, IOException {
+
+        // type
+        String type = request.getParameter("type");
+        if (type == null || type.equals("")) {
+            type = TYPE_TEXT;
+        }
+
+        if (!type.equals(TYPE_TEXT) && !type.equals(TYPE_JSON)) {
+            throw new HttpException(HttpServletResponse.SC_BAD_REQUEST);
+        }
 
         if (commandName.equals("server/stop")) {
             autoExecServer.runningStop();
-            responseText(response, "success");
+            resultToResponse(response, "success", type);
         } else if (commandName.equals("run")) {
             try {
-                MultiHTMLSuiteRunner runner = autoExecServer.process();
-                if (runner.getResult()) {
-                    responseText(response, "passed");
+                if (autoExecServer.getStatus() == AutoExecServer.STATUS_IDLE) {
+                    // idle
+                    MultiHTMLSuiteRunner runner = autoExecServer.process();
+                    resultToResponse(response, (runner.getResult() ? "passed"
+                            : "failed"), type);
                 } else {
-                    responseText(response, "failed");
+                    // running
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    resultToResponse(response, "duplicate", type);
                 }
+            } catch (Exception e) {
+                throw new HttpException(
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } else if (commandName.equals("run/async")) {
+            try {
+                if (autoExecServer.getStatus() == AutoExecServer.STATUS_IDLE) {
+                    // idle
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                autoExecServer.process();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+
+                    response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                    resultToResponse(response, "success", type);
+
+                } else {
+                    // running
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    resultToResponse(response, "duplicate", type);
+                }
+
+            } catch (Exception e) {
+                throw new HttpException(
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } else if (commandName.equals("status")) {
+            try {
+                commandStatus(type, response);
             } catch (Exception e) {
                 throw new HttpException(
                         HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -93,23 +154,191 @@ public class CommandHandler implements HttpHandler {
     }
 
     /**
+     * @param type
      * @param response
-     * @param text
-     * @throws IOException
+     * @throws IOException 
      */
-    private void responseText(HttpResponse response, String text)
+    private void commandStatus(String type, HttpResponse response)
             throws IOException {
 
-        response.setContentType("text/plain; charset=utf-8");
+        String status = (autoExecServer.getStatus() == AutoExecServer.STATUS_RUNNING) ? "running"
+                : "idle";
 
-        OutputStream outputStream = response.getOutputStream();
-        Writer writer = new OutputStreamWriter(outputStream, response
-                .getCharacterEncoding());
+        if (type.equals(TYPE_TEXT)) {
+            // text
+            resultToResponse(response, status, type);
+        } else {
+            // json
+            StringBuilder jsonString = new StringBuilder("{");
+            jsonString.append("\"status\": ").append(toJSON(status));
+
+            MultiHTMLSuiteRunner runner = autoExecServer.getRunner();
+
+            if (runner != null) {
+                jsonString
+                        .append(", \"result\": ")
+                        .append(
+                                toJSON((autoExecServer.getStatus() == AutoExecServer.STATUS_RUNNING) ? null
+                                        : runner.getResult() ? "passed"
+                                                : "failed"));
+                jsonString.append(", \"totalCount\": ").append(
+                        runner.getHtmlSuiteList().size());
+                jsonString.append(", \"passedCount\": ").append(
+                        runner.getPassedCount());
+                jsonString.append(", \"failedCount\": ").append(
+                        runner.getFailedCount());
+
+                jsonString.append(", \"suites\": [");
+                boolean first = true;
+                for (HTMLSuite htmlSuite : runner.getHtmlSuiteList()) {
+
+                    if (first) {
+                        first = false;
+                    } else {
+                        jsonString.append(", ");
+                    }
+
+                    jsonString.append("{\"suiteName\": ").append(
+                            toJSON(htmlSuite.getSuiteFile().getName()));
+                    jsonString.append(", \"resultPath\": ").append(
+                            toJSON(AutoExecServer.CONTEXT_PATH_RESULT
+                                    + htmlSuite.getResultFile().getParentFile()
+                                            .getName() + "/"
+                                    + htmlSuite.getResultFile().getName()));
+                    jsonString.append(", \"browser\": ").append(
+                            toJSON(htmlSuite.getBrowser()));
+
+                    String suiteStatus = null;
+                    switch (htmlSuite.getStatus()) {
+                    case HTMLSuite.STATUS_WAIT:
+                        suiteStatus = "wait";
+                        break;
+                    case HTMLSuite.STATUS_RUN:
+                        suiteStatus = "run";
+                        break;
+                    case HTMLSuite.STATUS_FINISH:
+                        suiteStatus = htmlSuite.isPassed() ? "passed"
+                                : "failed";
+                        break;
+                    default:
+                        break;
+                    }
+                    jsonString.append(", \"status\": ").append(
+                            toJSON(suiteStatus));
+                    jsonString.append("}");
+                }
+                jsonString.append("]");
+            }
+            jsonString.append("}");
+
+            response.setContentType(CONTENT_TYPE_JSON);
+
+            Writer writer = getResponceWriter(response);
+            try {
+                writer.append(jsonString);
+            } finally {
+                writer.close();
+            }
+        }
+    }
+
+    /**
+     * @param response
+     * @param text
+     * @param type
+     * @throws IOException
+     */
+    private void resultToResponse(HttpResponse response, String text,
+            String type) throws IOException {
+
+        if (type.equals(TYPE_TEXT)) {
+            // text
+            response.setContentType(CONTENT_TYPE_TEXT);
+        } else {
+            // json
+            response.setContentType(CONTENT_TYPE_JSON);
+        }
+
+        Writer writer = getResponceWriter(response);
+
         try {
-            writer.write(text);
+            if (type.equals(TYPE_TEXT)) {
+                // text
+                writer.write(text);
+            } else {
+                // json
+                writer.write("{\"result\": " + toJSON(text) + "}");
+            }
         } finally {
             writer.close();
         }
+    }
+
+    /**
+     * @param response
+     * @return responce writer
+     * @throws UnsupportedEncodingException
+     */
+    private Writer getResponceWriter(HttpResponse response)
+            throws UnsupportedEncodingException {
+        OutputStream outputStream = response.getOutputStream();
+        Writer writer = new OutputStreamWriter(outputStream, response
+                .getCharacterEncoding());
+        return writer;
+    }
+
+    /**
+     * @param text
+     * @return json string
+     */
+    private String toJSON(String text) {
+
+        if (text == null) {
+            return "null";
+        }
+
+        StringBuffer buffer = new StringBuffer("\"");
+
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+
+            switch (ch) {
+            case '\b':
+                buffer.append('\\');
+                buffer.append('b');
+                break;
+            case '\n':
+                buffer.append('\\');
+                buffer.append('n');
+                break;
+            case '\t':
+                buffer.append('\\');
+                buffer.append('t');
+                break;
+            case '\f':
+                buffer.append('\\');
+                buffer.append('f');
+                break;
+            case '\r':
+                buffer.append('\\');
+                buffer.append('r');
+                break;
+            case '"':
+                buffer.append('\\');
+                buffer.append('"');
+                break;
+            case '\\':
+                buffer.append('\\');
+                buffer.append('\\');
+                break;
+            default:
+                buffer.append(ch);
+                break;
+            }
+        }
+
+        buffer.append("\"");
+        return buffer.toString();
     }
 
     /**
