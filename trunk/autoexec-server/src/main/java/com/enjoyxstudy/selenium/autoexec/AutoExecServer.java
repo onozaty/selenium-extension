@@ -203,25 +203,29 @@ public class AutoExecServer {
         log.info("Start test process.");
 
         status = STATUS_RUNNING;
+        try {
 
-        // svn export
-        if (config.getSuiteRepo() != null) {
-            exportSuiteRepository();
+            // svn export
+            if (config.getSuiteRepo() != null) {
+                exportSuiteRepository();
+            }
+
+            // exec test suite
+            runTestSuite();
+
+            // write result index.html
+            writeResultIndexHtml();
+
+            // send result mail
+            if (mailConfig.getHost() != null
+                    && !mailConfig.getHost().equals("")) {
+                MailSender mailSender = new MailSender(mailConfig);
+                mailSender.send(runner, new File(config.getResultDir()));
+            }
+
+        } finally {
+            status = STATUS_IDLE;
         }
-
-        // exec test suite
-        runTestSuite();
-
-        // write result index.html
-        writeResultIndexHtml();
-
-        // send result mail
-        if (mailConfig.getHost() != null && !mailConfig.getHost().equals("")) {
-            MailSender mailSender = new MailSender(mailConfig);
-            mailSender.send(runner, new File(config.getResultDir()));
-        }
-
-        status = STATUS_IDLE;
 
         log.info("End test process.");
 
