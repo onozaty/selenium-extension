@@ -46,11 +46,19 @@ public class AutoExecServer {
     /** status running */
     public static final int STATUS_RUNNING = 1;
 
+    /** root context path */
+    public static final String CONTEXT_PATH_ROOT = "/selenium-server/autoexec/";
+
     /** command context path */
-    public static final String CONTEXT_PATH_COMMAND = "/selenium-server/autoexec/command/";
+    public static final String CONTEXT_PATH_COMMAND = CONTEXT_PATH_ROOT
+            + "command/";
 
     /** result context path */
-    public static final String CONTEXT_PATH_RESULT = "/selenium-server/autoexec/result/";
+    public static final String CONTEXT_PATH_RESULT = CONTEXT_PATH_ROOT
+            + "result/";
+
+    /** contents directory */
+    private static final String CONTENTS_DIR = "./contents/";
 
     /** config */
     private Config config;
@@ -167,6 +175,12 @@ public class AutoExecServer {
         Server server = seleniumServer.getServer();
 
         // add context
+        HttpContext rootContext = new HttpContext();
+        rootContext.setContextPath(CONTEXT_PATH_ROOT);
+        rootContext.setResourceBase(CONTENTS_DIR);
+        rootContext.addHandler(new ResourceHandler());
+        server.addContext(rootContext);
+
         HttpContext commandContext = new HttpContext();
         commandContext.setContextPath(CONTEXT_PATH_COMMAND);
         commandContext.setResourceBase(config.getResultDir());
