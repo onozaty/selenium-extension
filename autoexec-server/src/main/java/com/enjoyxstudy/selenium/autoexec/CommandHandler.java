@@ -192,6 +192,8 @@ public class CommandHandler implements HttpHandler {
                 jsonString.append(", \"endTime\": ").append(
                         isRunning ? null : toJSON(new Date(runner.getEndTime())
                                 .toString()));
+                jsonString.append(", \"nowTime\": ").append(
+                        toJSON(new Date().toString()));
 
                 jsonString.append(", \"suites\": [");
                 boolean first = true;
