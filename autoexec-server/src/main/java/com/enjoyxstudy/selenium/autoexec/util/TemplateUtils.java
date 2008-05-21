@@ -6,13 +6,18 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.mortbay.log.LogFactory;
 
 /**
  * @author onozaty
  */
 public final class TemplateUtils {
+
+    /** logger */
+    private static Log log = LogFactory.getLog(TemplateUtils.class);
 
     /** velocityEngine */
     private static final VelocityEngine velocityEngine = new VelocityEngine();
@@ -21,7 +26,7 @@ public final class TemplateUtils {
         try {
             velocityEngine.init();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error VelocityEngine can't init.", e);
         }
     }
 
