@@ -29,7 +29,7 @@ public class CommandHandler implements HttpHandler {
     private static final long serialVersionUID = -8717254990316146272L;
 
     /** logger */
-    private static Log log = LogFactory.getLog(CommandHandler.class);
+    static Log log = LogFactory.getLog(CommandHandler.class);
 
     /** type text */
     private static String TYPE_TEXT = "text";
@@ -124,7 +124,7 @@ public class CommandHandler implements HttpHandler {
                             try {
                                 autoExecServer.process();
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                log.error("Error exec process.", e);
                             }
                         }
                     }).start();

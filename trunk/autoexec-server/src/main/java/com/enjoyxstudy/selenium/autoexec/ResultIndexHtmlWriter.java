@@ -11,6 +11,9 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.commons.logging.Log;
+import org.mortbay.log.LogFactory;
+
 import com.enjoyxstudy.selenium.autoexec.util.TemplateUtils;
 import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
 
@@ -18,6 +21,9 @@ import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
  * @author onozaty
  */
 public class ResultIndexHtmlWriter {
+
+    /** logger */
+    private static Log log = LogFactory.getLog(ResultIndexHtmlWriter.class);
 
     /** template file name */
     private static final String TEMPLATE_FILE_NAME = "resultIndexTemplate.html";
@@ -53,7 +59,7 @@ public class ResultIndexHtmlWriter {
                 reader.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error Can't write result index.html", e);
             throw new RuntimeException(e);
         }
     }
