@@ -199,8 +199,6 @@ public class AutoExecServer {
 
         seleniumServer.start();
 
-        log.info("Start Selenium Server.");
-
         if (config.getAutoExecTime() != null) {
             // set auto exec timer
 
@@ -233,6 +231,8 @@ public class AutoExecServer {
                 }
             }, calendar.getTime(), 1000 * 60 * 60 * 24);
         }
+
+        log.info("Start Selenium Auto Exec Server.");
     }
 
     /**
@@ -240,7 +240,7 @@ public class AutoExecServer {
      */
     public void destroy() {
         seleniumServer.stop();
-        log.info("Stop Selenium Server.");
+        log.info("Stop Selenium Auto Exec Server.");
     }
 
     /**
