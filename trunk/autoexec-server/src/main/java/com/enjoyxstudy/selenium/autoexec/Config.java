@@ -63,6 +63,9 @@ public class Config {
     /** timeoutInSeconds */
     private int timeoutInSeconds = 60 * 60;
 
+    /** autoExecTime */
+    private String autoExecTime;
+
     /**
      * 
      */
@@ -127,6 +130,9 @@ public class Config {
 
         timeoutInSeconds = PropertiesUtils.getInt(properties, "timeout",
                 timeoutInSeconds);
+
+        autoExecTime = PropertiesUtils.getString(properties, "autoExecTime",
+                autoExecTime);
     }
 
     /**
@@ -365,6 +371,20 @@ public class Config {
      */
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    /**
+     * @return autoExecTime
+     */
+    public String getAutoExecTime() {
+        return autoExecTime;
+    }
+
+    /**
+     * @param autoExecTime autoExecTime
+     */
+    public void setAutoExecTime(String autoExecTime) {
+        this.autoExecTime = autoExecTime;
     }
 
 }

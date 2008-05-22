@@ -3,7 +3,10 @@ package com.enjoyxstudy.selenium.autoexec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.mortbay.http.HttpContext;
@@ -26,7 +29,7 @@ import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
 public class AutoExecServer {
 
     /** logger */
-    private static Log log = LogFactory.getLog(AutoExecServer.class);
+    static Log log = LogFactory.getLog(AutoExecServer.class);
 
     /** startup command */
     private static final String COMMAND_STARTUP = "startup";
@@ -125,6 +128,7 @@ public class AutoExecServer {
                         autoExecServer.destroy();
 
                     } catch (Exception e) {
+                        log.error("Error", e);
                         e.printStackTrace();
                     } finally {
                         System.exit(0);
@@ -196,6 +200,39 @@ public class AutoExecServer {
         seleniumServer.start();
 
         log.info("Start Selenium Server.");
+
+        if (config.getAutoExecTime() != null) {
+            // set auto exec timer
+
+            String[] time = config.getAutoExecTime().split(":");
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+            calendar.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+
+            log.info("Auto exec first time: " + calendar.getTime());
+
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+
+                @Override
+                public void run() {
+                    try {
+                        log.info("Start auto exec.");
+                        process();
+                        log.info("End auto exec.");
+                    } catch (Exception e) {
+                        log.error("Error auto exec.");
+                    }
+                }
+            }, calendar.getTime(), 1000 * 60 * 60 * 24);
+        }
     }
 
     /**
