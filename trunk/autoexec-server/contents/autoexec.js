@@ -15,7 +15,7 @@ var AutoExec = {
         $('#fadeMessage').fadeOut(4000);
       }, 2000);
 
-    setInterval(
+    AutoExec.intervalTimerId = setInterval(
       function() {
         AutoExec.render();
       }, 30000);
@@ -28,6 +28,7 @@ var AutoExec = {
       dataType: 'json',
       error: function() {
         alert('access error.');
+        clearInterval(AutoExec.intervalTimerId);
       },
       success: function(info) {
         $('#lastUpdate').text(info.nowTime || '-');
