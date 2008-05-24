@@ -71,7 +71,9 @@ public class CommandHandler implements HttpHandler {
 
         String commandName = pathInContext.replaceAll("^\\/|\\/$", "");
 
-        log.info("Command[" + commandName + "] Exec.");
+        if (log.isDebugEnabled()) {
+            log.debug("Command[" + commandName + "] Exec.");
+        }
 
         command(commandName, request, response);
     }
@@ -97,9 +99,11 @@ public class CommandHandler implements HttpHandler {
         }
 
         if (commandName.equals("server/stop")) {
+            log.info("Receive command(Stop server).");
             autoExecServer.runningStop();
             resultToResponse(response, "success", type);
         } else if (commandName.equals("run")) {
+            log.info("Receive command(Run test).");
             try {
                 if (autoExecServer.getStatus() == AutoExecServer.STATUS_IDLE) {
                     // idle
@@ -116,6 +120,7 @@ public class CommandHandler implements HttpHandler {
                         HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else if (commandName.equals("run/async")) {
+            log.info("Receive command(Run test async).");
             try {
                 if (autoExecServer.getStatus() == AutoExecServer.STATUS_IDLE) {
                     // idle
