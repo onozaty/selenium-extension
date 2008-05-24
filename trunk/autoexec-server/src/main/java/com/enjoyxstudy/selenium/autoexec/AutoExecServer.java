@@ -1,8 +1,12 @@
 package com.enjoyxstudy.selenium.autoexec;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.Timer;
@@ -22,6 +26,7 @@ import com.enjoyxstudy.selenium.autoexec.util.FileUtils;
 import com.enjoyxstudy.selenium.autoexec.util.SVNUtils;
 import com.enjoyxstudy.selenium.htmlsuite.HTMLSuite;
 import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
+import com.enjoyxstudy.selenium.htmlsuite.util.PropertiesUtils;
 
 /**
  * @author onozaty
@@ -137,7 +142,35 @@ public class AutoExecServer {
             }).start();
 
         } else {
-            // TODO: shutdown use http command
+
+            StringBuilder stopURL = new StringBuilder("http://localhost:");
+            stopURL.append(PropertiesUtils.getInt(properties, "port",
+                    SeleniumServer.DEFAULT_PORT));
+            stopURL.append(CONTEXT_PATH_COMMAND);
+            stopURL.append("server/stop");
+
+            HttpURLConnection connection = (HttpURLConnection) new URL(stopURL
+                    .toString()).openConnection();
+
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(connection
+                        .getInputStream()));
+
+                String result = reader.readLine();
+                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
+                        || !result.equals("success")) {
+                    throw new Exception("server stop error. status["
+                            + connection.getResponseCode() + "] result["
+                            + result + "]");
+                }
+            } finally {
+
+                if (reader != null) {
+                    reader.close();
+                }
+                connection.disconnect();
+            }
         }
     }
 
