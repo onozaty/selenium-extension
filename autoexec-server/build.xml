@@ -81,6 +81,7 @@
         <include name="lib/**" />
         <include name="*.bat" />
         <include name="*.sh" />
+        <include name="LICENSE.txt" />
       </fileset>
     </copy>
     <copy file="./setting.dist.properties" tofile="${dist}/setting.properties" />
