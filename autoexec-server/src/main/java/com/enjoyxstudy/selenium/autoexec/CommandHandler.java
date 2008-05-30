@@ -194,6 +194,8 @@ public class CommandHandler implements HttpHandler {
             // json
             StringBuilder jsonString = new StringBuilder("{");
             jsonString.append("\"status\": ").append(toJSON(status));
+            jsonString.append(", \"nowTime\": ").append(
+                    toJSON(new Date().toString()));
 
             MultiHTMLSuiteRunner runner = autoExecServer.getRunner();
 
@@ -213,9 +215,6 @@ public class CommandHandler implements HttpHandler {
                 jsonString.append(", \"endTime\": ").append(
                         isRunning ? null : toJSON(new Date(runner.getEndTime())
                                 .toString()));
-                jsonString.append(", \"nowTime\": ").append(
-                        toJSON(new Date().toString()));
-
                 jsonString.append(", \"suites\": [");
                 boolean first = true;
                 for (HTMLSuite htmlSuite : runner.getHtmlSuiteList()) {
