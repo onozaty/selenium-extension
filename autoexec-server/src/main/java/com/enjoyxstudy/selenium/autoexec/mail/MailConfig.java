@@ -61,7 +61,7 @@ public class MailConfig {
     private String from;
 
     /** subject */
-    private String subject = "Selenium Test Report #if($result)[passed]#else[failed]#end";
+    private String subject = "Selenium Test Report [${result}]";
 
     /** body */
     private String body;
