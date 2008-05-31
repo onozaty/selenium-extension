@@ -1,6 +1,4 @@
-result :#if($result) passed #else failed
-#end
-
+result :${result}
 
 passed count : ${passedCount}
 failed count : ${failedCount}

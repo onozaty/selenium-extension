@@ -126,7 +126,7 @@ public class MailSender {
         mimeMessage.setFrom(new InternetAddress(config.getFrom()));
 
         HashMap<String, Object> context = new HashMap<String, Object>();
-        context.put("result", Boolean.valueOf(runner.getResult()));
+        context.put("result", runner.getResult() ? "passed" : "failed");
         context.put("passedCount", new Integer(runner.getPassedCount()));
         context.put("failedCount", new Integer(runner.getFailedCount()));
         context
