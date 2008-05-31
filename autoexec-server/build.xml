@@ -76,10 +76,9 @@
 
     <copy todir="${dist}">
       <fileset dir=".">
-        <include name="selenium-autoexec-server-${jar.version}.jar" />
+        <include name="selenium-autoexec-server-*${jar.version}.jar" />
         <include name="contents/**" />
         <include name="lib/**" />
-        <exclude name="lib/*-sources-*.jar" />
         <include name="*.bat" />
         <include name="*.sh" />
         <include name="LICENSE.txt" />
