@@ -37,7 +37,7 @@ public class MailConfig {
     private String host;
 
     /** port */
-    private int port = -1;
+    private int port = 25;
 
     /** connectionTimeout */
     private int connectionTimeout = 10000;
