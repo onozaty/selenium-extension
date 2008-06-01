@@ -27,8 +27,8 @@ var AutoExec = {
       type: 'post',
       dataType: 'json',
       error: function() {
+        alert('access error.');
         clearInterval(AutoExec.intervalTimerId);
-        throw 'server access error.';
       },
       success: function(info) {
         $('#lastUpdate').text(info.nowTime || '-');
@@ -80,11 +80,11 @@ var AutoExec = {
       type: 'get',
       dataType: 'text',
       error: function() {
-        alert('run test error.');
+        alert('run test error1.');
       },
       success: function(result) {
         if (result != 'success') {
-          alert('run test error.');
+          alert('run test error2.');
         }
         AutoExec.render();
       }
