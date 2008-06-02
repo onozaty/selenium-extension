@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Selenium Auto Exec Server</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">Selenium Auto Exec Server</div>
+      <div id="navi">
+        Last Update:&nbsp;<span id="lastUpdate">-</span>
+      </div>
+      <div id="contents">
+        <p></p>
+        <table>
+          <tr>
+            <th style="width:30%;">status</th>
+            <td><span id="status">-</span>&nbsp;&nbsp;<input id="runButton" type="button" value="Run Test"></input></td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <th style="width:30%;">result</th>
+            <td><span id="result">-</span></td>
+          </tr>
+          <tr>
+            <th style="width:30%;">number of cases</th>
+            <td>passed: <span id="passedCount">-</span> / failed: <span id="failedCount">-</span> / total: <span id="totalCount">-</span></td>
+          </tr>
+          <tr>
+            <th style="width:30%;">start time</th>
+            <td><span id="startTime">-</span></td>
+          </tr>
+          <tr>
+            <th style="width:30%;">end time</th>
+            <td><span id="endTime">-</span></td>
+          </tr>
+        </table>
+        <table id="suitesTable">
+          <tbody>
+            <tr>
+              <th style="width:50%;">suite</th><th style="width:25%;">browser</th><th style="width:25%;">status</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="loading" style="display: none;">loading</div>
+    <div id="fadeMessage">This page is update automatically every 30 seconds.</div>
+    <script src="./jquery-1.2.3.js" type="text/javascript"></script>
+    <script src="./autoexec.js" type="text/javascript"></script>
+  </body>
+</html>
