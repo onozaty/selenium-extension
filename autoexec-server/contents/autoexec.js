@@ -27,8 +27,8 @@ var AutoExec = {
       type: 'post',
       dataType: 'json',
       error: function() {
-        alert('access error.');
         clearInterval(AutoExec.intervalTimerId);
+        alert('server access error.');
       },
       success: function(info) {
         $('#lastUpdate').text(info.nowTime || '-');
