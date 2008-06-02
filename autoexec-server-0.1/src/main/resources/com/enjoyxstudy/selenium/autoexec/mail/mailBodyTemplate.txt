@@ -1,0 +1,15 @@
+result :${result}
+
+passed count : ${passedCount}
+failed count : ${failedCount}
+total  count : ${totalCount}
+
+start time : ${startTime}
+end time   : ${endTime}
+
+details
+#foreach($htmlSuite in $htmlSuites)
+#set($filePath = "$htmlSuite.resultFile.parentFile.name/$htmlSuite.resultFile.name")
+$velocityCount : ${filePath} :#if($htmlSuite.passed) passed #else failed #end
+
+#end
