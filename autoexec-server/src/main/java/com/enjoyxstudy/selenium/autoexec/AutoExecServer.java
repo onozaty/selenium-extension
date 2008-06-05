@@ -303,6 +303,7 @@ public class AutoExecServer {
         log.info("Start test process.");
 
         status = STATUS_RUNNING;
+        runner = null;
         try {
 
             // svn export
