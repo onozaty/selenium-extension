@@ -1,1 +1,1 @@
-java -jar selenium-ext-htmlsuite-0.2.jar
+java -jar selenium-ext-htmlsuite-0.3.jar

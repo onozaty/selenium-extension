@@ -150,6 +150,18 @@ public class MultiHTMLSuiteRunner {
             System.setProperty("http.proxyPort", proxyPort);
         }
 
+        String firefoxProfileTemplateName = PropertiesUtils.getString(
+                properties, "firefoxProfileTemplate");
+        if (firefoxProfileTemplateName != null) {
+            File firefoxProfileTemplate = new File(firefoxProfileTemplateName);
+            if (!firefoxProfileTemplate.exists()) {
+                throw new RuntimeException(
+                        "Firefox profile template doesn't exist: "
+                                + firefoxProfileTemplate.getAbsolutePath());
+            }
+            SeleniumServer.setFirefoxProfileTemplate(firefoxProfileTemplate);
+        }
+
         SeleniumServer seleniumServer = new SeleniumServer(port, false,
                 multiWindow);
 
