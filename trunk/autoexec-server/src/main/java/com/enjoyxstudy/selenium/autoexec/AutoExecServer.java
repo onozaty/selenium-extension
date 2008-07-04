@@ -215,6 +215,11 @@ public class AutoExecServer {
             System.setProperty("http.proxyPort", config.getProxyPort());
         }
 
+        if (config.getFirefoxProfileTemplate() != null) {
+            SeleniumServer.setFirefoxProfileTemplate(config
+                    .getFirefoxProfileTemplate());
+        }
+
         seleniumServer = new SeleniumServer(config.getPort(), false, config
                 .isMultiWindow());
 
