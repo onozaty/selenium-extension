@@ -12,6 +12,6 @@
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/mail-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/selenium-ext-htmlsuite-0.2.jar" sourcepath="lib/selenium-ext-htmlsuite-sources-0.2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium-ext-htmlsuite-0.3.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

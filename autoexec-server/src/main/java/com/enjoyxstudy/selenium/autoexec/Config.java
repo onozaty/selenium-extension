@@ -43,6 +43,9 @@ public class Config {
     /** log */
     private String log;
 
+    /** firefox profile */
+    private File firefoxProfileTemplate;
+
     /** userExtensions */
     private File userExtensions;
 
@@ -126,6 +129,17 @@ public class Config {
                 proxyHost);
         proxyPort = PropertiesUtils.getString(properties, "proxyPort",
                 proxyPort);
+
+        String firefoxProfileTemplateName = PropertiesUtils.getString(
+                properties, "firefoxProfileTemplate");
+        if (firefoxProfileTemplateName != null) {
+            firefoxProfileTemplate = new File(firefoxProfileTemplateName);
+            if (!firefoxProfileTemplate.exists()) {
+                throw new RuntimeException(
+                        "Firefox profile template doesn't exist: "
+                                + firefoxProfileTemplate.getAbsolutePath());
+            }
+        }
 
         browsers = PropertiesUtils.getString(properties, "browser").split(",");
         startURL = PropertiesUtils.getString(properties, "startURL");
@@ -401,6 +415,20 @@ public class Config {
      */
     public void setAutoExecTime(String autoExecTime) {
         this.autoExecTime = autoExecTime;
+    }
+
+    /**
+     * @return firefoxProfileTemplate
+     */
+    public File getFirefoxProfileTemplate() {
+        return firefoxProfileTemplate;
+    }
+
+    /**
+     * @param firefoxProfileTemplate firefoxProfileTemplate
+     */
+    public void setFirefoxProfileTemplate(File firefoxProfileTemplate) {
+        this.firefoxProfileTemplate = firefoxProfileTemplate;
     }
 
 }
