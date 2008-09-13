@@ -67,6 +67,16 @@
         <attribute name="Implementation-Version" value="${build.version}"/>
       </manifest>
     </jar>
+    <jar destfile="${jar.dir}/selenium-autoexec-client-${jar.version}.jar"
+       basedir="${classes.dir}"
+       includes="com/enjoyxstudy/selenium/autoexec/client/**">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="${jar.vender}"/>
+        <attribute name="Implementation-Title" value="Selenium Auto Exec Client"/>
+        <attribute name="Implementation-Version" value="${build.version}"/>
+        <attribute name="Main-Class" value="com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient"/>
+      </manifest>
+    </jar>
   </target>
 
   <target name="dist" depends="jar">
@@ -77,10 +87,12 @@
     <copy todir="${dist}">
       <fileset dir=".">
         <include name="selenium-autoexec-server-*${jar.version}.jar" />
+        <include name="selenium-autoexec-client-*${jar.version}.jar" />
         <include name="contents/**" />
         <include name="lib/**" />
         <include name="*.bat" />
         <include name="*.sh" />
+        <include name="client.xml" />
         <include name="LICENSE.txt" />
       </fileset>
     </copy>
