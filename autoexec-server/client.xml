@@ -7,15 +7,15 @@
     <target name="client">
       <java classname="com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient" failonerror="true" fork="yes">
         <classpath refid="classpath"/>
-        <arg value="-a"/>
+        <!-<arg value="-a"/>-->
         <arg value="http://localhost:4444/selenium-server/autoexec/command/"/>
       </java>
     </target>
     <target name="test">
       <java classname="com.enjoyxstudy.selenium.autoexec.client.SeleniumAutoExecRemoteTest" failonerror="true" fork="yes">
         <classpath refid="classpath"/>
+        <!--<sysproperty key="seleniumaes.async" value="true"/>-->
         <sysproperty key="seleniumaes.url" value="http://localhost:4444/selenium-server/autoexec/command/"/>
-        <sysproperty key="seleniumaes.async" value="true"/>
       </java>
     </target>
 </project>
