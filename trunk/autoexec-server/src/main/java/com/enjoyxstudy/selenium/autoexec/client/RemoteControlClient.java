@@ -36,8 +36,25 @@ public class RemoteControlClient {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        RemoteControlClient client = new RemoteControlClient();
-        System.out.println(client.runAsync());
+
+        String url = null;
+        boolean isAsync = false;
+
+        for (String arg : args) {
+            if (arg.equals("-a")) {
+                isAsync = true;
+            } else {
+                url = arg;
+            }
+        }
+
+        RemoteControlClient client = new RemoteControlClient(url);
+
+        if (isAsync) {
+            System.out.println("run async. reuslt:" + client.runAsync());
+        } else {
+            System.out.println("run. reuslt:" + client.run());
+        }
     }
 
     /**
@@ -51,7 +68,9 @@ public class RemoteControlClient {
      * @param commandUrl
      */
     public RemoteControlClient(String commandUrl) {
-        this.commandUrl = commandUrl;
+        if (commandUrl != null && !commandUrl.equals("")) {
+            this.commandUrl = commandUrl;
+        }
     }
 
     /**
