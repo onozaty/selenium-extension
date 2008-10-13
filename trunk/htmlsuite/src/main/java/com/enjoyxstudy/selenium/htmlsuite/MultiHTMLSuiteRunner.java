@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -594,6 +595,7 @@ public class MultiHTMLSuiteRunner {
                         && pathname.getName().matches(".*[Cc]ase.*\\.html");
             }
         });
+        Arrays.sort(testCaseFiles);
 
         if (suiteFile == null) {
             suiteFile = new File(testCaseDir, "generatedTestSuite.html");
