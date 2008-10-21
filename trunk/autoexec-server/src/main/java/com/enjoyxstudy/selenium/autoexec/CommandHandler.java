@@ -25,6 +25,9 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.mortbay.http.HttpContext;
 import org.mortbay.http.HttpException;
@@ -192,48 +195,37 @@ public class CommandHandler implements HttpHandler {
             resultToResponse(response, status, type);
         } else {
             // json
-            StringBuilder jsonString = new StringBuilder("{");
-            jsonString.append("\"status\": ").append(toJSON(status));
-            jsonString.append(", \"nowTime\": ").append(
-                    toJSON(new Date().toString()));
+            JSONObject json = new JSONObject();
+
+            json.put("status", status);
+            json.put("nowTime", new Date().toString());
 
             MultiHTMLSuiteRunner runner = autoExecServer.getRunner();
 
             if (runner != null) {
-                jsonString.append(", \"result\": ").append(
-                        toJSON(isRunning ? null : runner.getResult() ? "passed"
-                                : "failed"));
-                jsonString.append(", \"totalCount\": ").append(
-                        runner.getHtmlSuiteList().size());
-                jsonString.append(", \"passedCount\": ").append(
-                        runner.getPassedCount());
-                jsonString.append(", \"failedCount\": ").append(
-                        runner.getFailedCount());
+                json.put("result", isRunning ? null
+                        : runner.getResult() ? "passed" : "failed");
+                json.put("totalCount", new Integer(runner.getHtmlSuiteList()
+                        .size()));
+                json.put("passedCount", new Integer(runner.getPassedCount()));
+                json.put("failedCount", new Integer(runner.getFailedCount()));
 
-                jsonString.append(", \"startTime\": ").append(
-                        toJSON(new Date(runner.getStartTime()).toString()));
-                jsonString.append(", \"endTime\": ").append(
-                        isRunning ? null : toJSON(new Date(runner.getEndTime())
-                                .toString()));
-                jsonString.append(", \"suites\": [");
-                boolean first = true;
+                json.put("startTime", new Date(runner.getStartTime())
+                        .toString());
+                json.put("endTime", isRunning ? null : new Date(runner
+                        .getEndTime()).toString());
+
+                JSONArray suiteArray = new JSONArray();
                 for (HTMLSuite htmlSuite : runner.getHtmlSuiteList()) {
 
-                    if (first) {
-                        first = false;
-                    } else {
-                        jsonString.append(", ");
-                    }
+                    JSONObject suite = new JSONObject();
 
-                    jsonString.append("{\"suiteName\": ").append(
-                            toJSON(htmlSuite.getSuiteFile().getName()));
-                    jsonString.append(", \"resultPath\": ").append(
-                            toJSON(AutoExecServer.CONTEXT_PATH_RESULT
-                                    + htmlSuite.getResultFile().getParentFile()
-                                            .getName() + "/"
-                                    + htmlSuite.getResultFile().getName()));
-                    jsonString.append(", \"browser\": ").append(
-                            toJSON(htmlSuite.getBrowser()));
+                    suite.put("suiteName", htmlSuite.getSuiteFile().getName());
+                    suite.put("resultPath", AutoExecServer.CONTEXT_PATH_RESULT
+                            + htmlSuite.getResultFile().getParentFile()
+                                    .getName() + "/"
+                            + htmlSuite.getResultFile().getName());
+                    suite.put("browser", htmlSuite.getBrowser());
 
                     String suiteStatus = null;
                     switch (htmlSuite.getStatus()) {
@@ -250,19 +242,17 @@ public class CommandHandler implements HttpHandler {
                     default:
                         break;
                     }
-                    jsonString.append(", \"status\": ").append(
-                            toJSON(suiteStatus));
-                    jsonString.append("}");
+                    suite.put("status", suiteStatus);
+                    suiteArray.add(suite);
                 }
-                jsonString.append("]");
+                json.put("suites", suiteArray);
             }
-            jsonString.append("}");
 
             response.setContentType(CONTENT_TYPE_JSON);
 
             Writer writer = getResponceWriter(response);
             try {
-                writer.append(jsonString);
+                writer.append(json.toString());
             } finally {
                 writer.close();
             }
