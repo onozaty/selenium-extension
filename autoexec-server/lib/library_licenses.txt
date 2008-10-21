@@ -1,4 +1,4 @@
-Jakarta-Commons, Velocity, Selenium RC, Selenium HTMLSuite Extension
+Jakarta-Commons, Velocity, EZMorph, Selenium RC, Selenium HTMLSuite Extension
   Licensed under the Apache License, Version 2.0
   http://www.apache.org/licenses/LICENSE-2.0
 
