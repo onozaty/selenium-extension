@@ -52,7 +52,7 @@ public class SeleniumAutoExecRemoteTest extends TestCase {
 
             String result = client.runString();
 
-            assertTrue("run failed.", RemoteControlClient.isRunPassed(result));
+            assertTrue("run failed.", RemoteControlClient.isPassedResult(result));
             System.out.print(result);
         }
 
