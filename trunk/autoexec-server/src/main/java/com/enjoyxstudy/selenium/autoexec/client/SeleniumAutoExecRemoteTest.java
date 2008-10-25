@@ -45,13 +45,16 @@ public class SeleniumAutoExecRemoteTest extends TestCase {
         RemoteControlClient client = new RemoteControlClient(System
                 .getProperty("seleniumaes.url"));
 
-        boolean result;
         if ("true".equals(System.getProperty("seleniumaes.async"))) {
-            result = client.runAsync();
+
+            assertTrue("run async failed.", client.runAsync());
         } else {
-            result = client.run();
+
+            String result = client.runString();
+
+            assertTrue("run failed.", RemoteControlClient.isRunPassed(result));
+            System.out.print(result);
         }
 
-        assertTrue(result);
     }
 }

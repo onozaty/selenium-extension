@@ -44,6 +44,33 @@ import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
  */
 public class CommandHandler implements HttpHandler {
 
+    /** SUCCESS */
+    private static final String SUCCESS = "success";
+
+    /** FAILED */
+    private static final String FAILED = "failed";
+
+    /** PASSED */
+    private static final String PASSED = "passed";
+
+    /** DUPLICATE */
+    private static final String DUPLICATE = "duplicate";
+
+    /** RUN */
+    private static final String RUN = "run";
+
+    /** WAIT */
+    private static final String WAIT = "wait";
+
+    /** IDLE */
+    private static final String IDLE = "idle";
+
+    /** RUNNING */
+    private static final String RUNNING = "running";
+
+    /** LF */
+    private static final String LF = "\n";
+
     /** serialVersionUID */
     private static final long serialVersionUID = -8717254990316146272L;
 
@@ -98,6 +125,8 @@ public class CommandHandler implements HttpHandler {
     }
 
     /**
+     * handle command.
+     * 
      * @param commandName
      * @param request
      * @param response
@@ -118,67 +147,136 @@ public class CommandHandler implements HttpHandler {
         }
 
         if (commandName.equals("server/stop")) {
+
             log.info("Receive command(Stop server).");
-            autoExecServer.runningStop();
-            resultToResponse(response, "success", type);
+
+            commandServerStop(type, response);
+
         } else if (commandName.equals("run")) {
+
             log.info("Receive command(Run test).");
+
             try {
-                if (autoExecServer.getStatus() == AutoExecServer.STATUS_IDLE) {
-                    // idle
-                    MultiHTMLSuiteRunner runner = autoExecServer.process();
-                    resultToResponse(response, (runner.getResult() ? "passed"
-                            : "failed"), type);
-                } else {
-                    // running
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    resultToResponse(response, "duplicate", type);
-                }
+                commandRun(type, response);
             } catch (Exception e) {
                 throw new HttpException(
                         HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+
         } else if (commandName.equals("run/async")) {
+
             log.info("Receive command(Run test async).");
+
             try {
-                if (autoExecServer.getStatus() == AutoExecServer.STATUS_IDLE) {
-                    // idle
-                    new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                autoExecServer.process();
-                            } catch (Exception e) {
-                                log.error("Error exec process.", e);
-                            }
-                        }
-                    }).start();
-
-                    response.setStatus(HttpServletResponse.SC_ACCEPTED);
-                    resultToResponse(response, "success", type);
-
-                } else {
-                    // running
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    resultToResponse(response, "duplicate", type);
-                }
-
+                commandRunAsync(type, response);
             } catch (Exception e) {
                 throw new HttpException(
                         HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+
         } else if (commandName.equals("status")) {
+
+            log.info("Receive command(Get status).");
+
             try {
                 commandStatus(type, response);
             } catch (Exception e) {
                 throw new HttpException(
                         HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+
         } else {
             throw new HttpException(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
     /**
+     * stop server command.
+     * 
+     * @param type
+     * @param response
+     * @throws IOException
+     */
+    private void commandServerStop(String type, HttpResponse response)
+            throws IOException {
+
+        autoExecServer.runningStop();
+
+        resultToResponse(response, SUCCESS, type);
+    }
+
+    /**
+     * run command.
+     * 
+     * @param type
+     * @param response
+     * @throws Exception 
+     */
+    private void commandRun(String type, HttpResponse response)
+            throws Exception {
+
+        if (autoExecServer.getStatus() == AutoExecServer.STATUS_IDLE) {
+            // idle
+            MultiHTMLSuiteRunner runner = autoExecServer.process();
+
+            String responseText;
+            if (type.equals(TYPE_TEXT)) {
+                // text
+                StringBuilder stringBuilder = new StringBuilder();
+
+                addResultString(stringBuilder, runner, false);
+                responseText = stringBuilder.toString();
+            } else {
+                // json
+                JSONObject json = new JSONObject();
+
+                addResultJSON(json, runner, false);
+                responseText = json.toString();
+            }
+            toResponse(response, responseText, type);
+        } else {
+            // running
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            resultToResponse(response, DUPLICATE, type);
+        }
+
+    }
+
+    /**
+     * run async command.
+     * 
+     * @param type
+     * @param response
+     * @throws IOException
+     */
+    private void commandRunAsync(String type, HttpResponse response)
+            throws IOException {
+
+        if (autoExecServer.getStatus() == AutoExecServer.STATUS_IDLE) {
+            // idle
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        autoExecServer.process();
+                    } catch (Exception e) {
+                        log.error("Error exec process.", e);
+                    }
+                }
+            }).start();
+
+            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            resultToResponse(response, SUCCESS, type);
+
+        } else {
+            // running
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            resultToResponse(response, DUPLICATE, type);
+        }
+    }
+
+    /**
+     * status command.
+     * 
      * @param type
      * @param response
      * @throws IOException 
@@ -188,78 +286,147 @@ public class CommandHandler implements HttpHandler {
 
         boolean isRunning = (autoExecServer.getStatus() == AutoExecServer.STATUS_RUNNING);
 
-        String status = isRunning ? "running" : "idle";
+        String status = isRunning ? RUNNING : IDLE;
 
+        String responseText;
         if (type.equals(TYPE_TEXT)) {
             // text
-            resultToResponse(response, status, type);
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.append("status: ").append(status).append(LF);
+            stringBuilder.append("now time: ").append(new Date().toString())
+                    .append(LF);
+            addResultString(stringBuilder, autoExecServer.getRunner(),
+                    isRunning);
+
+            responseText = stringBuilder.toString();
         } else {
             // json
             JSONObject json = new JSONObject();
 
             json.put("status", status);
             json.put("nowTime", new Date().toString());
+            addResultJSON(json, autoExecServer.getRunner(), isRunning);
 
-            MultiHTMLSuiteRunner runner = autoExecServer.getRunner();
+            responseText = json.toString();
+        }
+        toResponse(response, responseText, type);
+    }
 
-            if (runner != null) {
-                json.put("result", isRunning ? null
-                        : runner.getResult() ? "passed" : "failed");
-                json.put("totalCount", new Integer(runner.getHtmlSuiteList()
-                        .size()));
-                json.put("passedCount", new Integer(runner.getPassedCount()));
-                json.put("failedCount", new Integer(runner.getFailedCount()));
+    /**
+     * result to json.
+     * 
+     * @param json
+     * @param runner
+     * @param isRunning
+     */
+    private void addResultJSON(JSONObject json, MultiHTMLSuiteRunner runner,
+            boolean isRunning) {
 
-                json.put("startTime", new Date(runner.getStartTime())
-                        .toString());
-                json.put("endTime", isRunning ? null : new Date(runner
-                        .getEndTime()).toString());
+        if (runner != null) {
+            json.put("result", isRunning ? null : runner.getResult() ? PASSED
+                    : FAILED);
+            json.put("totalCount",
+                    new Integer(runner.getHtmlSuiteList().size()));
+            json.put("passedCount", new Integer(runner.getPassedCount()));
+            json.put("failedCount", new Integer(runner.getFailedCount()));
 
-                JSONArray suiteArray = new JSONArray();
-                for (HTMLSuite htmlSuite : runner.getHtmlSuiteList()) {
+            json.put("startTime", new Date(runner.getStartTime()).toString());
+            json.put("endTime", isRunning ? null
+                    : new Date(runner.getEndTime()).toString());
 
-                    JSONObject suite = new JSONObject();
+            JSONArray suiteArray = new JSONArray();
+            for (HTMLSuite htmlSuite : runner.getHtmlSuiteList()) {
 
-                    suite.put("suiteName", htmlSuite.getSuiteFile().getName());
-                    suite.put("resultPath", AutoExecServer.CONTEXT_PATH_RESULT
-                            + htmlSuite.getResultFile().getParentFile()
-                                    .getName() + "/"
-                            + htmlSuite.getResultFile().getName());
-                    suite.put("browser", htmlSuite.getBrowser());
+                JSONObject suite = new JSONObject();
 
-                    String suiteStatus = null;
-                    switch (htmlSuite.getStatus()) {
-                    case HTMLSuite.STATUS_WAIT:
-                        suiteStatus = "wait";
-                        break;
-                    case HTMLSuite.STATUS_RUN:
-                        suiteStatus = "run";
-                        break;
-                    case HTMLSuite.STATUS_FINISH:
-                        suiteStatus = htmlSuite.isPassed() ? "passed"
-                                : "failed";
-                        break;
-                    default:
-                        break;
-                    }
-                    suite.put("status", suiteStatus);
-                    suiteArray.add(suite);
-                }
-                json.put("suites", suiteArray);
+                suite.put("suiteName", htmlSuite.getSuiteFile().getName());
+                suite.put("resultPath", AutoExecServer.CONTEXT_PATH_RESULT
+                        + htmlSuite.getResultFile().getParentFile().getName()
+                        + "/" + htmlSuite.getResultFile().getName());
+                suite.put("browser", htmlSuite.getBrowser());
+                suite.put("status", selectSuiteStatus(htmlSuite, null));
+                suiteArray.add(suite);
             }
-
-            response.setContentType(CONTENT_TYPE_JSON);
-
-            Writer writer = getResponceWriter(response);
-            try {
-                writer.append(json.toString());
-            } finally {
-                writer.close();
-            }
+            json.put("suites", suiteArray);
         }
     }
 
     /**
+     * result to String.
+     * 
+     * @param stringBuilder
+     * @param runner
+     * @param isRunning
+     */
+    private void addResultString(StringBuilder stringBuilder,
+            MultiHTMLSuiteRunner runner, boolean isRunning) {
+
+        if (runner != null) {
+            stringBuilder.append("result: ").append(
+                    isRunning ? "-" : runner.getResult() ? PASSED : FAILED)
+                    .append(LF);
+            stringBuilder.append("number of cases: ");
+            stringBuilder.append("passed: ").append(runner.getPassedCount());
+            stringBuilder.append(" / failed: ").append(runner.getFailedCount());
+            stringBuilder.append(" / total: ").append(
+                    runner.getHtmlSuiteList().size()).append(LF);
+
+            stringBuilder.append("start time: ").append(
+                    new Date(runner.getStartTime()).toString()).append(LF);
+            stringBuilder.append("end time  : ").append(
+                    isRunning ? "-" : new Date(runner.getEndTime()).toString())
+                    .append(LF);
+
+            stringBuilder.append(
+                    "----------------------------------------------")
+                    .append(LF);
+
+            for (HTMLSuite htmlSuite : runner.getHtmlSuiteList()) {
+
+                stringBuilder.append(htmlSuite.getSuiteFile().getName())
+                        .append(": ");
+                stringBuilder.append(htmlSuite.getBrowser()).append(": ");
+
+                stringBuilder.append(selectSuiteStatus(htmlSuite, "-")).append(
+                        LF);
+            }
+            stringBuilder.append(
+                    "----------------------------------------------")
+                    .append(LF);
+        }
+    }
+
+    /**
+     * select suite status.
+     * 
+     * @param htmlSuite
+     * @param defaultStatus 
+     * @return suite status
+     */
+    private String selectSuiteStatus(HTMLSuite htmlSuite, String defaultStatus) {
+
+        String suiteStatus = defaultStatus;
+
+        switch (htmlSuite.getStatus()) {
+        case HTMLSuite.STATUS_WAIT:
+            suiteStatus = WAIT;
+            break;
+        case HTMLSuite.STATUS_RUN:
+            suiteStatus = RUN;
+            break;
+        case HTMLSuite.STATUS_FINISH:
+            suiteStatus = htmlSuite.isPassed() ? PASSED : FAILED;
+            break;
+        default:
+            break;
+        }
+        return suiteStatus;
+    }
+
+    /**
+     * result to response.
+     * 
      * @param response
      * @param text
      * @param type
@@ -267,6 +434,29 @@ public class CommandHandler implements HttpHandler {
      */
     private void resultToResponse(HttpResponse response, String text,
             String type) throws IOException {
+
+        if (type.equals(TYPE_TEXT)) {
+            // text
+            text = "result: " + text;
+        } else {
+            // json
+            JSONObject json = new JSONObject();
+            json.put("result", text);
+            text = json.toString();
+        }
+        toResponse(response, text, type);
+    }
+
+    /**
+     * text to response.
+     * 
+     * @param response
+     * @param text
+     * @param type
+     * @throws IOException
+     */
+    private void toResponse(HttpResponse response, String text, String type)
+            throws IOException {
 
         if (type.equals(TYPE_TEXT)) {
             // text
@@ -279,83 +469,26 @@ public class CommandHandler implements HttpHandler {
         Writer writer = getResponceWriter(response);
 
         try {
-            if (type.equals(TYPE_TEXT)) {
-                // text
-                writer.write(text);
-            } else {
-                // json
-                writer.write("{\"result\": " + toJSON(text) + "}");
-            }
+            writer.write(text);
         } finally {
             writer.close();
         }
     }
 
     /**
+     * return response writer.
+     * 
      * @param response
-     * @return responce writer
+     * @return response writer
      * @throws UnsupportedEncodingException
      */
     private Writer getResponceWriter(HttpResponse response)
             throws UnsupportedEncodingException {
+
         OutputStream outputStream = response.getOutputStream();
         Writer writer = new OutputStreamWriter(outputStream, response
                 .getCharacterEncoding());
         return writer;
-    }
-
-    /**
-     * @param text
-     * @return json string
-     */
-    private String toJSON(String text) {
-
-        if (text == null) {
-            return "null";
-        }
-
-        StringBuffer buffer = new StringBuffer("\"");
-
-        for (int i = 0; i < text.length(); i++) {
-            char ch = text.charAt(i);
-
-            switch (ch) {
-            case '\b':
-                buffer.append('\\');
-                buffer.append('b');
-                break;
-            case '\n':
-                buffer.append('\\');
-                buffer.append('n');
-                break;
-            case '\t':
-                buffer.append('\\');
-                buffer.append('t');
-                break;
-            case '\f':
-                buffer.append('\\');
-                buffer.append('f');
-                break;
-            case '\r':
-                buffer.append('\\');
-                buffer.append('r');
-                break;
-            case '"':
-                buffer.append('\\');
-                buffer.append('"');
-                break;
-            case '\\':
-                buffer.append('\\');
-                buffer.append('\\');
-                break;
-            default:
-                buffer.append(ch);
-                break;
-            }
-        }
-
-        buffer.append("\"");
-        return buffer.toString();
     }
 
     /**

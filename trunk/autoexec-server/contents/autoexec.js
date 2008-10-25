@@ -83,7 +83,7 @@ var AutoExec = {
         alert('run test error1.');
       },
       success: function(result) {
-        if (result != 'success') {
+        if (result != 'result: success') {
           alert('run test error2.');
         }
         AutoExec.render();
