@@ -2,7 +2,7 @@
 <project basedir="." default="client-test" name="selenium-autoexec-client">
   <path id="classpath">
     <pathelement location="lib/junit-3.8.2.jar"/>
-    <pathelement location="selenium-autoexec-client-0.3-SNAPSHOT.jar"/>
+    <pathelement location="selenium-autoexec-client-0.3.jar"/>
   </path>
 
   <target name="client-test">
