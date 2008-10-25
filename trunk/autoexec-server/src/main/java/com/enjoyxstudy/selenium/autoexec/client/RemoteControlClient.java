@@ -83,6 +83,40 @@ public class RemoteControlClient {
     }
 
     /**
+     * call "stop server" command.
+     * 
+     * @return result
+     * @throws IOException
+     */
+    public boolean stopServer() throws IOException {
+
+        return isSuccessResult(stopServerString());
+    }
+
+    /**
+    * call "stop server" command.
+      * 
+     * @return result
+     * @throws IOException
+     */
+    public String stopServerString() throws IOException {
+
+        return stopServerString(TYPE_TEXT);
+    }
+
+    /**
+    * call "stop server" command.
+     * 
+     * @param type 
+     * @return result
+     * @throws IOException
+     */
+    public String stopServerString(String type) throws IOException {
+
+        return doCommand("server/stop", type);
+    }
+
+    /**
      * call "run" command.
      * 
      * @return result
@@ -90,7 +124,7 @@ public class RemoteControlClient {
      */
     public boolean run() throws IOException {
 
-        return isRunPassed(runString());
+        return isPassedResult(runString());
     }
 
     /**
@@ -122,7 +156,7 @@ public class RemoteControlClient {
      * @param result
      * @return is passed
      */
-    public static boolean isRunPassed(String result) {
+    public static boolean isPassedResult(String result) {
 
         return result.indexOf("result: " + PASSED) == 0;
     }
@@ -135,7 +169,7 @@ public class RemoteControlClient {
      */
     public boolean runAsync() throws IOException {
 
-        return isRunAsyncSuccess(runAsyncString());
+        return isSuccessResult(runAsyncString());
     }
 
     /**
@@ -167,9 +201,9 @@ public class RemoteControlClient {
      * @param result
      * @return is success
      */
-    public static boolean isRunAsyncSuccess(String result) {
+    public static boolean isSuccessResult(String result) {
 
-        return result.equals(SUCCESS);
+        return result.indexOf("result: " + SUCCESS) == 0;
     }
 
     /**

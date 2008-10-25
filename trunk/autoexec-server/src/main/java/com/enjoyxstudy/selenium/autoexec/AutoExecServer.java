@@ -16,13 +16,9 @@
  */
 package com.enjoyxstudy.selenium.autoexec;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.Timer;
@@ -36,6 +32,7 @@ import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.SeleniumServer;
 import org.tmatesoft.svn.core.SVNException;
 
+import com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient;
 import com.enjoyxstudy.selenium.autoexec.mail.MailConfig;
 import com.enjoyxstudy.selenium.autoexec.mail.MailSender;
 import com.enjoyxstudy.selenium.autoexec.util.FileUtils;
@@ -159,34 +156,15 @@ public class AutoExecServer {
 
         } else {
 
-            StringBuilder stopURL = new StringBuilder("http://localhost:");
-            stopURL.append(PropertiesUtils.getInt(properties, "port",
+            StringBuilder commandURL = new StringBuilder("http://localhost:");
+            commandURL.append(PropertiesUtils.getInt(properties, "port",
                     SeleniumServer.DEFAULT_PORT));
-            stopURL.append(CONTEXT_PATH_COMMAND);
-            stopURL.append("server/stop");
+            commandURL.append(CONTEXT_PATH_COMMAND);
 
-            HttpURLConnection connection = (HttpURLConnection) new URL(stopURL
-                    .toString()).openConnection();
+            RemoteControlClient client = new RemoteControlClient(commandURL
+                    .toString());
 
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new InputStreamReader(connection
-                        .getInputStream()));
-
-                String result = reader.readLine();
-                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
-                        || !result.equals("success")) {
-                    throw new Exception("server stop error. status["
-                            + connection.getResponseCode() + "] result["
-                            + result + "]");
-                }
-            } finally {
-
-                if (reader != null) {
-                    reader.close();
-                }
-                connection.disconnect();
-            }
+            client.stopServer();
         }
     }
 
