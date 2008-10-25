@@ -77,6 +77,15 @@
         <attribute name="Main-Class" value="com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient"/>
       </manifest>
     </jar>
+    <jar destfile="${jar.dir}/selenium-autoexec-client-sources-${jar.version}.jar"
+       basedir="${java.dir}"
+       includes="**">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="${jar.vender}"/>
+        <attribute name="Implementation-Title" value="Selenium Auto Exec Clinet Source Files"/>
+        <attribute name="Implementation-Version" value="${build.version}"/>
+      </manifest>
+    </jar>
   </target>
 
   <target name="dist" depends="jar">
