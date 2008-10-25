@@ -28,6 +28,15 @@ import java.net.URL;
  */
 public class RemoteControlClient {
 
+    /** type text */
+    private static final String TYPE_TEXT = "text";
+
+    /** SUCCESS */
+    private static final String SUCCESS = "success";
+
+    /** PASSED */
+    private static final String PASSED = "passed";
+
     /** Selenium AutoExec Server command URL */
     private String commandUrl = "http://localhost:4444/selenium-server/autoexec/command/";
 
@@ -51,9 +60,9 @@ public class RemoteControlClient {
         RemoteControlClient client = new RemoteControlClient(url);
 
         if (isAsync) {
-            System.out.println("run async. reuslt:" + client.runAsync());
+            System.out.println("run async. " + client.runAsyncString());
         } else {
-            System.out.println("run. reuslt:" + client.run());
+            System.out.println("run. " + client.runString());
         }
     }
 
@@ -75,51 +84,112 @@ public class RemoteControlClient {
 
     /**
      * call "run" command.
+     * 
      * @return result
      * @throws IOException
      */
     public boolean run() throws IOException {
 
-        String result = doCommand("run");
+        return isRunPassed(runString());
+    }
 
-        if (result.equals("passed")) {
-            return true;
-        } else if (result.equals("failed")) {
-            return false;
-        } else {
-            throw new IOException("illegal result.  result=[" + result + "]");
-        }
+    /**
+     * call "run" command.
+     * 
+     * @return result
+     * @throws IOException
+     */
+    public String runString() throws IOException {
+
+        return runString(TYPE_TEXT);
+    }
+
+    /**
+     * call "run" command.
+     * 
+     * @param type 
+     * @return result
+     * @throws IOException
+     */
+    public String runString(String type) throws IOException {
+
+        return doCommand("run", type);
+    }
+
+    /**
+     * check run passed.
+     * 
+     * @param result
+     * @return is passed
+     */
+    public static boolean isRunPassed(String result) {
+
+        return result.indexOf("result: " + PASSED) == 0;
     }
 
     /**
      * call "run async" command.
+     * 
      * @return result
      * @throws IOException
      */
     public boolean runAsync() throws IOException {
 
-        String result = doCommand("run/async");
+        return isRunAsyncSuccess(runAsyncString());
+    }
 
-        if (result.equals("success")) {
-            return true;
-        } else if (result.equals("failed")) {
-            return false;
-        } else {
-            throw new IOException("illegal result.  result=[" + result + "]");
-        }
+    /**
+     * call "run async" command.
+     * 
+     * @return result
+     * @throws IOException
+     */
+    public String runAsyncString() throws IOException {
+
+        return runAsyncString(TYPE_TEXT);
+    }
+
+    /**
+     * call "run async" command.
+     * 
+     * @param type 
+     * @return result
+     * @throws IOException
+     */
+    public String runAsyncString(String type) throws IOException {
+
+        return doCommand("run/async", type);
+    }
+
+    /**
+     * check run async success.
+     * 
+     * @param result
+     * @return is success
+     */
+    public static boolean isRunAsyncSuccess(String result) {
+
+        return result.equals(SUCCESS);
     }
 
     /**
      * call remote command.
      * 
      * @param command
+     * @param type 
      * @return response
      * @throws IOException
      */
-    private String doCommand(String command) throws IOException {
+    private String doCommand(String command, String type) throws IOException {
 
-        HttpURLConnection connection = (HttpURLConnection) new URL(commandUrl
-                + command).openConnection();
+        StringBuilder url = new StringBuilder(commandUrl);
+        url.append(command);
+        if (type != null) {
+            url.append("?type=").append(type);
+        }
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(url
+                .toString()).openConnection();
 
         try {
             connection.setRequestMethod("GET");
