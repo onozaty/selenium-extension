@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="client-test" name="selenium-autoexec-client">
+<project basedir="." default="junit-test" name="selenium-autoexec-client">
   <path id="classpath">
-    <pathelement location="lib/junit-3.8.2.jar"/>
     <pathelement location="selenium-autoexec-client-0.3.jar"/>
   </path>
 
-  <target name="client-test">
-    <java classname="com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient" failonerror="true" fork="yes">
-      <classpath refid="classpath"/>
-      <!--<arg value="-a"/>-->
-      <arg value="http://localhost:4444/selenium-server/autoexec/command/"/>
-    </java>
-  </target>
   <target name="junit-test">
     <mkdir dir="junit-dist"/>
     <junit fork="yes" printsummary="withOutAndErr">
@@ -22,4 +14,13 @@
       <classpath refid="classpath"/>
     </junit>
   </target>
+
+  <target name="client-test">
+    <java classname="com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient" failonerror="true" fork="yes">
+      <classpath refid="classpath"/>
+      <!--<arg value="-a"/>-->
+      <arg value="http://localhost:4444/selenium-server/autoexec/command/"/>
+    </java>
+  </target>
+
 </project>
