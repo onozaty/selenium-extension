@@ -59,10 +59,21 @@ public class RemoteControlClient {
 
         RemoteControlClient client = new RemoteControlClient(url);
 
+        boolean isSuccess = true;
         if (isAsync) {
-            System.out.println("run async. " + client.runAsyncString());
+            String result = client.runAsyncString();
+            isSuccess = RemoteControlClient.isSuccessResult(result);
+
+            System.out.println("run async. " + result);
         } else {
-            System.out.println("run. " + client.runString());
+            String result = client.runString();
+            isSuccess = RemoteControlClient.isPassedResult(result);
+
+            System.out.println("run. " + result);
+        }
+
+        if (!isSuccess) {
+            System.exit(1);
         }
     }
 
