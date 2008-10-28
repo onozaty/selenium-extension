@@ -20,6 +20,7 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
+import hudson.model.Result;
 import hudson.tasks.Builder;
 
 import java.io.IOException;
@@ -57,24 +58,29 @@ public class SeleniumAutoExecBuilder extends Builder {
      * @see hudson.tasks.BuildStepCompatibilityLayer#perform(hudson.model.AbstractBuild, hudson.Launcher, hudson.model.BuildListener)
      */
     @Override
-    public boolean perform(@SuppressWarnings("unused")
-    AbstractBuild<?, ?> build, @SuppressWarnings("unused")
-    Launcher launcher, BuildListener listener) throws IOException {
+    public boolean perform(AbstractBuild<?, ?> build,
+            @SuppressWarnings("unused")
+            Launcher launcher, BuildListener listener) throws IOException {
 
         PrintStream logger = listener.getLogger();
 
-        boolean result = false;
+        logger.println("Test Selenium Auto Exec Server(" + url + ").");
+
+        String result;
         try {
             result = new RemoteControlClient(url.replaceAll("/$", "")
-                    + "/command/").run();
+                    + "/command/").runString();
         } catch (IOException e) {
             logger.println("Error return from Selenium Auto Exec Server(" + url
                     + ").");
             throw e;
         }
-        logger.println("Test " + (result ? "success" : "failed")
-                + " from Selenium Auto Exec Server(" + url + ").");
-        return result;
+        logger.println(result);
+
+        if (!RemoteControlClient.isPassedResult(result)) {
+            build.setResult(Result.UNSTABLE);
+        }
+        return true;
     }
 
     /**
