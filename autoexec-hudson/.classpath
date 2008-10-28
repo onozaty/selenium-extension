@@ -84,7 +84,7 @@
   <classpathentry kind="var" path="M2_REPO/pull-parser/pull-parser/2/pull-parser-2.jar"/>
   <classpathentry kind="var" path="M2_REPO/msv/relaxngDatatype/20030807/relaxngDatatype-20030807.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jvnet/hudson/main/remoting/1.255/remoting-1.255.jar" sourcepath="M2_REPO/org/jvnet/hudson/main/remoting/1.255/remoting-1.255-sources.jar"/>
-  <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/selenium-autoexec-client-0.3-SNAPSHOT.jar"/>
+  <classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/selenium-autoexec-client-0.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.3/servlet-api-2.3.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.3/servlet-api-2.3-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/slide/slide-webdavlib/2.1/slide-webdavlib-2.1.jar" sourcepath="M2_REPO/slide/slide-webdavlib/2.1/slide-webdavlib-2.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5/spring-beans-2.5.jar" sourcepath="M2_REPO/org/springframework/spring-beans/2.5/spring-beans-2.5-sources.jar"/>
