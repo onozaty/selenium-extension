@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="antrun" default="jar" basedir=".">
+
+  <property name="lib.dir" value="lib" />
+  <property name="classes.dir" value="classes" />
+
+  <property name="java.dir" value="src/main/java" />
+  <property name="resources.dir" value="src/main/resources" />
+
+  <property name="encoding" value="UTF-8" />
+  <property name="debug" value="on" />
+
+  <property name="jar.dir" value="./" />
+
+  <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
+  <property name="jar.version" value="0.1" />
+
+  <path id="class.path">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="clean">
+    <delete dir="${classes.dir}" />
+    <mkdir dir="${classes.dir}" />
+  </target>
+
+  <target name="compile" depends="clean">
+    <javac destdir="${classes.dir}"
+      encoding="${encoding}"
+      verbose="on"
+      debug="${debug}">
+      <src path="${java.dir}"/>
+      <classpath refid="class.path" />
+    </javac>
+    <copy todir="${classes.dir}">
+      <fileset dir="./src/main/resources" />
+    </copy>
+  </target>
+
+  <target name="jar" depends="compile">
+    <delete>
+      <fileset dir="${jar.dir}/" includes="selenium-server-1.0b1-patch-*.jar" />
+    </delete>
+    <property name="build.version" value="${jar.version}" />
+    <jar destfile="${jar.dir}/selenium-server-1.0b1-patch-${jar.version}.jar"
+       basedir="${classes.dir}"
+       includes="**">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="${jar.vender}"/>
+        <attribute name="Implementation-Title" value="Selenium Server 1.0 beta 1 patch"/>
+        <attribute name="Implementation-Version" value="${build.version}"/>
+      </manifest>
+    </jar>
+  </target>
+
+</project>
