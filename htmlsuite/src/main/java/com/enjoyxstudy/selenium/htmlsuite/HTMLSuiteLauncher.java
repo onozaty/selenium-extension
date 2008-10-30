@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.SeleniumCommandTimedOutException;
 import org.openqa.selenium.server.SeleniumServer;
+import org.openqa.selenium.server.BrowserSessionFactory.BrowserSessionInfo;
 import org.openqa.selenium.server.browserlaunchers.AsyncExecute;
 import org.openqa.selenium.server.browserlaunchers.BrowserLauncher;
 import org.openqa.selenium.server.browserlaunchers.BrowserLauncherFactory;
@@ -61,7 +62,7 @@ public class HTMLSuiteLauncher implements HTMLResultsListener {
      * @param browserURL - the start URL for the browser
      * @param suiteFilePath - a file containing the HTML suite to run
      * @param resultFilePath - The file to which we'll output the HTML results
-     * @param timeoutInSeconds - the amount of time (in milliseconds) to wait for the browser to finish
+     * @param timeoutInSeconds - the amount of time (in seconds) to wait for the browser to finish
      * @return result
      * @throws IOException if we can't read the write file
      */
@@ -80,7 +81,7 @@ public class HTMLSuiteLauncher implements HTMLResultsListener {
      * @param browserURL - the start URL for the browser
      * @param suiteFile - a file containing the HTML suite to run
      * @param resultFile - The file to which we'll output the HTML results
-     * @param timeoutInSeconds - the amount of time (in milliseconds) to wait for the browser to finish
+     * @param timeoutInSeconds - the amount of time (in seconds) to wait for the browser to finish
      * @return result
      * @throws IOException if we can't read the write file
      */
@@ -113,7 +114,7 @@ public class HTMLSuiteLauncher implements HTMLResultsListener {
      * @param browser - the browserString ("*firefox", "*iexplore" or an executable path)
      * @param browserURL - the start URL for the browser
      * @param suiteFilePath - a file containing the HTML suite to run
-     * @param timeoutInSeconds - the amount of time (in milliseconds) to wait for the browser to finish
+     * @param timeoutInSeconds - the amount of time (in seconds) to wait for the browser to finish
      * @return result
      * @throws IOException if we can't read the write file
      */
@@ -130,7 +131,7 @@ public class HTMLSuiteLauncher implements HTMLResultsListener {
      * @param browser - the browserString ("*firefox", "*iexplore" or an executable path)
      * @param browserURL - the start URL for the browser
      * @param suiteFile - a file containing the HTML suite to run
-     * @param timeoutInSeconds - the amount of time (in milliseconds) to wait for the browser to finish
+     * @param timeoutInSeconds - the amount of time (in seconds) to wait for the browser to finish
      * @return result
      * @throws IOException if we can't read the write file
      */
@@ -172,7 +173,7 @@ public class HTMLSuiteLauncher implements HTMLResultsListener {
      * @param browser - the browserString ("*firefox", "*iexplore" or an executable path)
      * @param browserURL - the start URL for the browser
      * @param suiteURL - the relative URL to the HTML suite
-     * @param timeoutInSeconds - the amount of time (in milliseconds) to wait for the browser to finish
+     * @param timeoutInSeconds - the amount of time (in seconds) to wait for the browser to finish
      * @return result
      */
     private boolean run(String browser, String browserURL, String suiteURL,
@@ -194,7 +195,12 @@ public class HTMLSuiteLauncher implements HTMLResultsListener {
         BrowserLauncherFactory blf = new BrowserLauncherFactory();
         String sessionId = Long.toString(System.currentTimeMillis() % 1000000);
         BrowserLauncher launcher = blf.getBrowserLauncher(browser, sessionId);
-        server.registerBrowserLauncher(sessionId, launcher);
+
+        BrowserSessionInfo sessionInfo = new BrowserSessionInfo(sessionId,
+                browser, browserURL, launcher, null);
+        server.registerBrowserSession(sessionInfo);
+
+        // JB: -- aren't these URLs in the wrong order according to declaration?
         launcher.launchHTMLSuite(suiteURL, browserURL, server.isMultiWindow(),
                 "info");
         long now = System.currentTimeMillis();
@@ -203,6 +209,7 @@ public class HTMLSuiteLauncher implements HTMLResultsListener {
             AsyncExecute.sleepTight(500);
         }
         launcher.close();
+        server.deregisterBrowserSession(sessionInfo);
         if (results == null) {
             throw new SeleniumCommandTimedOutException();
         }
