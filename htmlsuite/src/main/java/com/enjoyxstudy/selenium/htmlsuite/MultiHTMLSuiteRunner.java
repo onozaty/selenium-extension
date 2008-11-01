@@ -27,6 +27,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -58,7 +59,7 @@ public class MultiHTMLSuiteRunner {
     private SeleniumServer server;
 
     /** htmlSuites */
-    private ArrayList<HTMLSuite> htmlSuiteList = new ArrayList<HTMLSuite>();
+    private CopyOnWriteArrayList<HTMLSuite> htmlSuiteList = new CopyOnWriteArrayList<HTMLSuite>();
 
     /** result */
     private boolean result;
@@ -804,7 +805,7 @@ public class MultiHTMLSuiteRunner {
     /**
      * @return htmlSuiteList
      */
-    public ArrayList<HTMLSuite> getHtmlSuiteList() {
+    public CopyOnWriteArrayList<HTMLSuite> getHtmlSuiteList() {
         return htmlSuiteList;
     }
 
