@@ -62,7 +62,10 @@ public class Config {
     private String startURL;
 
     /** suiteDir */
-    private String suiteDir = "suite";
+    private File suiteDir;
+
+    /** default suiteDir name */
+    private static final String DEFAULT_SUITE_DIR_NAME = "suite";
 
     /** suiteRepo */
     private String suiteRepo;
@@ -77,7 +80,13 @@ public class Config {
     private boolean generateSuite = true;
 
     /** resultDir */
-    private String resultDir = "result";
+    private File resultDir;
+
+    /** default resultDir name */
+    private static final String DEFAULT_RESULT_DIR_NAME = "result";
+
+    /** resultPermanent */
+    private boolean resultPermanent = true;
 
     /** timeoutInSeconds */
     private int timeoutInSeconds = 60 * 60;
@@ -144,7 +153,8 @@ public class Config {
         browsers = PropertiesUtils.getString(properties, "browser").split(",");
         startURL = PropertiesUtils.getString(properties, "startURL");
 
-        suiteDir = PropertiesUtils.getString(properties, "suiteDir", suiteDir);
+        suiteDir = new File(PropertiesUtils.getString(properties, "suiteDir",
+                DEFAULT_SUITE_DIR_NAME));
 
         suiteRepo = PropertiesUtils.getString(properties, "suiteRepo");
         suiteRepoUsername = PropertiesUtils.getString(properties,
@@ -155,8 +165,11 @@ public class Config {
         generateSuite = PropertiesUtils.getBoolean(properties, "generateSuite",
                 generateSuite);
 
-        resultDir = PropertiesUtils.getString(properties, "resultDir",
-                resultDir);
+        resultDir = new File(PropertiesUtils.getString(properties, "resultDir",
+                DEFAULT_RESULT_DIR_NAME));
+
+        resultPermanent = PropertiesUtils.getBoolean(properties,
+                "resultPermanent", resultPermanent);
 
         timeoutInSeconds = PropertiesUtils.getInt(properties, "timeout",
                 timeoutInSeconds);
@@ -196,15 +209,29 @@ public class Config {
     /**
      * @return resultDir
      */
-    public String getResultDir() {
+    public File getResultDir() {
         return resultDir;
     }
 
     /**
      * @param resultDir resultDir
      */
-    public void setResultDir(String resultDir) {
+    public void setResultDir(File resultDir) {
         this.resultDir = resultDir;
+    }
+
+    /**
+     * @return resultPermanent
+     */
+    public boolean isResultPermanent() {
+        return resultPermanent;
+    }
+
+    /**
+     * @param resultPermanent resultPermanent
+     */
+    public void setResultPermanent(boolean resultPermanent) {
+        this.resultPermanent = resultPermanent;
     }
 
     /**
@@ -224,14 +251,14 @@ public class Config {
     /**
      * @return suiteDir
      */
-    public String getSuiteDir() {
+    public File getSuiteDir() {
         return suiteDir;
     }
 
     /**
      * @param suiteDir suiteDir
      */
-    public void setSuiteDir(String suiteDir) {
+    public void setSuiteDir(File suiteDir) {
         this.suiteDir = suiteDir;
     }
 
