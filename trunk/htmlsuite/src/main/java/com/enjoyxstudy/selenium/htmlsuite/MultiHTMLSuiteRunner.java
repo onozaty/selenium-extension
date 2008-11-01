@@ -177,21 +177,11 @@ public class MultiHTMLSuiteRunner {
             MultiHTMLSuiteRunner htmlSuiteRunner = new MultiHTMLSuiteRunner(
                     seleniumServer);
             if (generateSuite) {
-                if (result != null) {
-                    htmlSuiteRunner.addHTMLSuiteGenerate(browsers, startURL,
-                            suite, result, timeoutInSeconds);
-                } else {
-                    htmlSuiteRunner.addHTMLSuiteGenerate(browsers, startURL,
-                            suite, timeoutInSeconds);
-                }
+                htmlSuiteRunner.addHTMLSuiteGenerate(browsers, startURL, suite,
+                        result, timeoutInSeconds);
             } else {
-                if (result != null) {
-                    htmlSuiteRunner.addHTMLSuites(browsers, startURL, suite,
-                            result, timeoutInSeconds);
-                } else {
-                    htmlSuiteRunner.addHTMLSuites(browsers, startURL, suite,
-                            timeoutInSeconds);
-                }
+                htmlSuiteRunner.addHTMLSuites(browsers, startURL, suite,
+                        result, timeoutInSeconds);
             }
 
             htmlSuiteRunner.runHTMLSuites();
@@ -248,12 +238,8 @@ public class MultiHTMLSuiteRunner {
     public void addHTMLSuiteGenerate(String[] browsers, String browserURL,
             String testCaseDirPath, int timeoutInSeconds) throws IOException {
 
-        File suiteFile = generateHTMLSute(new File(testCaseDirPath));
-
-        for (int i = 0; i < browsers.length; i++) {
-            _addHTMLSuite(browsers[i], browserURL, suiteFile, null,
-                    timeoutInSeconds);
-        }
+        addHTMLSuiteGenerate(browsers, browserURL, testCaseDirPath, null,
+                timeoutInSeconds);
     }
 
     /**
@@ -289,16 +275,7 @@ public class MultiHTMLSuiteRunner {
     public void addHTMLSuites(String[] browsers, String browserURL,
             String suitePath, int timeoutInSeconds) throws IOException {
 
-        File suiteFile = new File(suitePath);
-        for (int i = 0; i < browsers.length; i++) {
-            if (suiteFile.isDirectory()) {
-                addHTMLSuiteDir(browsers[i], browserURL, suiteFile,
-                        timeoutInSeconds);
-            } else {
-                _addHTMLSuite(browsers[i], browserURL, suiteFile, null,
-                        timeoutInSeconds);
-            }
-        }
+        addHTMLSuites(browsers, browserURL, suitePath, null, timeoutInSeconds);
     }
 
     /**
@@ -328,6 +305,7 @@ public class MultiHTMLSuiteRunner {
     }
 
     ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
 
     /**
      * @param browser 
@@ -339,7 +317,7 @@ public class MultiHTMLSuiteRunner {
     public void addHTMLSuiteDir(String browser, String browserURL,
             String suiteDirPath, int timeoutInSeconds) throws IOException {
 
-        addHTMLSuiteDir(browser, browserURL, new File(suiteDirPath),
+        addHTMLSuiteDir(browser, browserURL, new File(suiteDirPath), null,
                 timeoutInSeconds);
     }
 
@@ -355,8 +333,8 @@ public class MultiHTMLSuiteRunner {
             String suiteDirPath, String resultDirPath, int timeoutInSeconds)
             throws IOException {
 
-        addHTMLSuiteDir(browser, browserURL, new File(suiteDirPath), new File(
-                resultDirPath), timeoutInSeconds);
+        addHTMLSuiteDir(browser, browserURL, new File(suiteDirPath),
+                toFile(resultDirPath), timeoutInSeconds);
     }
 
     /**
@@ -369,11 +347,7 @@ public class MultiHTMLSuiteRunner {
     public void addHTMLSuiteDir(String browser, String browserURL,
             File suiteDir, int timeoutInSeconds) throws IOException {
 
-        File[] suiteFiles = collectSuiteFiles(suiteDir);
-        if (suiteFiles.length == 0) {
-            throw new IOException("Can't find HTML Suite dir:" + suiteDir);
-        }
-        addHTMLSuites(browser, browserURL, suiteFiles, timeoutInSeconds);
+        addHTMLSuiteDir(browser, browserURL, suiteDir, null, timeoutInSeconds);
     }
 
     /**
@@ -408,25 +382,9 @@ public class MultiHTMLSuiteRunner {
     public void addHTMLSuites(String browser, String browserURL,
             String[] suiteFilePaths, int timeoutInSeconds) throws IOException {
 
-        addHTMLSuites(browser, browserURL, toFiles(suiteFilePaths),
+        addHTMLSuites(browser, browserURL, suiteFilePaths, null,
                 timeoutInSeconds);
     }
-
-    /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteFiles 
-     * @param timeoutInSeconds 
-     * @throws IOException 
-     */
-    public void addHTMLSuites(String browser, String browserURL,
-            File[] suiteFiles, int timeoutInSeconds) throws IOException {
-
-        addHTMLSuites(browser, browserURL, suiteFiles, (File[]) null,
-                timeoutInSeconds);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
 
     /**
      * @param browser 
@@ -440,18 +398,32 @@ public class MultiHTMLSuiteRunner {
             String[] suiteFilePaths, String resultDirPath, int timeoutInSeconds)
             throws IOException {
 
-        addHTMLSuites(browser, browserURL, toFiles(suiteFilePaths), new File(
-                resultDirPath), timeoutInSeconds);
+        addHTMLSuites(browser, browserURL, toFiles(suiteFilePaths),
+                toFile(resultDirPath), timeoutInSeconds);
     }
 
     /**
      * @param browser 
      * @param browserURL 
      * @param suiteFiles 
-     * @param resultDir 
      * @param timeoutInSeconds 
      * @throws IOException 
      */
+    public void addHTMLSuites(String browser, String browserURL,
+            File[] suiteFiles, int timeoutInSeconds) throws IOException {
+
+        addHTMLSuites(browser, browserURL, suiteFiles, (File) null,
+                timeoutInSeconds);
+    }
+
+    /**
+    * @param browser 
+    * @param browserURL 
+    * @param suiteFiles 
+    * @param resultDir 
+    * @param timeoutInSeconds 
+    * @throws IOException 
+    */
     public void addHTMLSuites(String browser, String browserURL,
             File[] suiteFiles, File resultDir, int timeoutInSeconds)
             throws IOException {
@@ -482,6 +454,8 @@ public class MultiHTMLSuiteRunner {
                     timeoutInSeconds);
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////
 
     /**
      * @param browser 
@@ -637,6 +611,10 @@ public class MultiHTMLSuiteRunner {
     private File[] createResultFiles(File resultDir, File[] suiteFiles)
             throws IOException {
 
+        if (resultDir == null) {
+            return null;
+        }
+        
         if (!resultDir.exists() || !resultDir.isDirectory()) {
             throw new IOException("Can't find Result dir:"
                     + resultDir.getAbsolutePath());
@@ -661,11 +639,27 @@ public class MultiHTMLSuiteRunner {
      */
     private File createResultFile(File resultDir, File suiteFile) {
 
+        if (resultDir == null) {
+            return null;
+        }
+
         String suiteFileName = suiteFile.getName();
         int index = suiteFileName.lastIndexOf('.');
 
         return new File(resultDir, suiteFileName.substring(0, index)
                 + "_result" + suiteFileName.substring(index));
+    }
+
+    /**
+     * @param filePath
+     * @return file
+     */
+    private File toFile(String filePath) {
+
+        if (filePath == null) {
+            return null;
+        }
+        return new File(filePath);
     }
 
     /**
@@ -676,7 +670,7 @@ public class MultiHTMLSuiteRunner {
 
         File[] files = new File[filePaths.length];
         for (int i = 0; i < filePaths.length; i++) {
-            files[i] = new File(filePaths[i]);
+            files[i] = toFile(filePaths[i]);
         }
         return files;
     }
@@ -689,6 +683,10 @@ public class MultiHTMLSuiteRunner {
      */
     private File createResultDir(String browser, String resultDirPath)
             throws IOException {
+
+        if (resultDirPath == null) {
+            return null;
+        }
 
         File resultDir = new File(resultDirPath, browser.substring(1)
                 .replaceAll(" .*", ""));
