@@ -13,10 +13,10 @@
   <property name="jar.dir" value="./" />
 
   <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
-  <property name="jar.version" value="0.4" />
+  <property name="jar.version" value="0.5" />
 
   <property name="main.class" value="com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner" />
-  <property name="jar.class.path" value="./selenium-server.jar" />
+  <property name="jar.class.path" value="./selenium-server-1.0b1-patch-0.1.jar ./selenium-server-1.0b1.jar" />
 
   <property name="dist" value="./dist" />
 
@@ -71,21 +71,27 @@
   <target name="dist" depends="jar">
 
     <delete dir="${dist}" />
-    <mkdir dir="${dist}" />
+    <mkdir dir="${dist}/selenium-ext-htmlsuite-${jar.version}" />
 
-    <copy todir="${dist}">
+    <copy todir="${dist}/selenium-ext-htmlsuite-${jar.version}">
       <fileset dir=".">
         <include name="selenium-ext-htmlsuite-*${jar.version}.jar" />
         <include name="htmlSuite.properties" />
         <include name="LICENSE.txt" />
         <include name="start.bat" />
-        <include name="suite/testCase*.html" />
       </fileset>
     </copy>
-    <copy file="./lib/selenium-server.jar" tofile="${dist}/selenium-server.jar" />
-    <mkdir dir="${dist}/result" />
 
-    <zip destfile="selenium-ext-htmlsuite-${jar.version}.zip" basedir="${dist}" />
+    <mkdir dir="${dist}/selenium-ext-htmlsuite-${jar.version}/suite" />
+    <copy todir="${dist}/selenium-ext-htmlsuite-${jar.version}/suite">
+      <fileset dir="./suite/pattern1" includes="testCase*.html" />
+    </copy>
+
+    <copy file="./lib/selenium-server-1.0b1.jar" tofile="${dist}/selenium-ext-htmlsuite-${jar.version}/selenium-server-1.0b1.jar" />
+    <copy file="./lib/selenium-server-1.0b1-patch-0.1.jar" tofile="${dist}/selenium-ext-htmlsuite-${jar.version}/selenium-server-1.0b1-patch-0.1.jar" />
+    <mkdir dir="${dist}/selenium-ext-htmlsuite-${jar.version}/result" />
+
+    <zip destfile="selenium-ext-htmlsuite-${jar.version}-dist.zip" basedir="${dist}" />
 
     <delete dir="${dist}" />
   </target>
