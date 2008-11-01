@@ -91,9 +91,9 @@
   <target name="dist" depends="jar">
 
     <delete dir="${dist}" />
-    <mkdir dir="${dist}/selenium-autoexec-server" />
+    <mkdir dir="${dist}/selenium-autoexec-server-${jar.version}" />
 
-    <copy todir="${dist}/selenium-autoexec-server">
+    <copy todir="${dist}/selenium-autoexec-server-${jar.version}">
       <fileset dir=".">
         <include name="selenium-autoexec-server-*${jar.version}.jar" />
         <include name="selenium-autoexec-client-*${jar.version}.jar" />
@@ -106,14 +106,14 @@
         <include name="LICENSE.txt" />
       </fileset>
     </copy>
-    <copy file="./setting.dist.properties" tofile="${dist}/selenium-autoexec-server/setting.properties" />
-    <copy todir="${dist}/selenium-autoexec-server/suite">
+    <copy file="./setting.dist.properties" tofile="${dist}/selenium-autoexec-server-${jar.version}/setting.properties" />
+    <copy todir="${dist}/selenium-autoexec-server-${jar.version}/suite">
       <fileset dir="./src/test/suite/passed" />
     </copy>
-    <mkdir dir="${dist}/selenium-autoexec-server/result" />
+    <mkdir dir="${dist}/selenium-autoexec-server-${jar.version}/result" />
 
-    <delete file="selenium-autoexec-server-${jar.version}.zip" />
-    <zip destfile="selenium-autoexec-server-${jar.version}.zip" basedir="${dist}" />
+    <delete file="selenium-autoexec-server-${jar.version}-dist.zip" />
+    <zip destfile="selenium-autoexec-server-${jar.version}-dist.zip" basedir="${dist}" />
 
     <delete dir="${dist}" />
   </target>
