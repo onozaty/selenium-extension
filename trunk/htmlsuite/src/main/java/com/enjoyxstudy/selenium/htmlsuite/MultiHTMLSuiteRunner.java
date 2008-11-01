@@ -266,12 +266,30 @@ public class MultiHTMLSuiteRunner {
             String testCaseDirPath, String resultDirPath, int timeoutInSeconds)
             throws IOException {
 
-        File[] suiteFiles = generateHTMLSutes(new File(testCaseDirPath));
+        addHTMLSuiteGenerate(browsers, browserURL, new File(testCaseDirPath),
+                toFile(resultDirPath), timeoutInSeconds);
+    }
+
+    /**
+     * @param browsers 
+     * @param browserURL 
+     * @param testCaseDir 
+     * @param resultDir
+     * @param timeoutInSeconds 
+     * @throws IOException 
+     */
+    public void addHTMLSuiteGenerate(String[] browsers, String browserURL,
+            File testCaseDir, File resultDir, int timeoutInSeconds)
+            throws IOException {
+
+        File[] suiteFiles = generateHTMLSutes(testCaseDir);
 
         for (int i = 0; i < browsers.length; i++) {
-            File resultDir = createResultDir(browsers[i], resultDirPath);
+            File resultDirByBrowser = createResultDirByBrowser(browsers[i],
+                    resultDir);
             addHTMLSuites(browsers[i], browserURL, suiteFiles,
-                    createResultFiles(resultDir, suiteFiles), timeoutInSeconds);
+                    createResultFiles(resultDirByBrowser, suiteFiles),
+                    timeoutInSeconds);
         }
     }
 
@@ -302,16 +320,32 @@ public class MultiHTMLSuiteRunner {
             String suitePath, String resultDirPath, int timeoutInSeconds)
             throws IOException {
 
-        File suiteFile = new File(suitePath);
+        addHTMLSuites(browsers, browserURL, new File(suitePath),
+                toFile(resultDirPath), timeoutInSeconds);
+    }
+
+    /**
+     * @param browsers 
+     * @param browserURL 
+     * @param suiteFile 
+     * @param resultDir 
+     * @param timeoutInSeconds 
+     * @throws IOException 
+     */
+    public void addHTMLSuites(String[] browsers, String browserURL,
+            File suiteFile, File resultDir, int timeoutInSeconds)
+            throws IOException {
 
         for (int i = 0; i < browsers.length; i++) {
-            File resultDir = createResultDir(browsers[i], resultDirPath);
+            File resultDirByBrowser = createResultDirByBrowser(browsers[i],
+                    resultDir);
             if (suiteFile.isDirectory()) {
-                addHTMLSuiteDir(browsers[i], browserURL, suiteFile, resultDir,
-                        timeoutInSeconds);
+                addHTMLSuiteDir(browsers[i], browserURL, suiteFile,
+                        resultDirByBrowser, timeoutInSeconds);
             } else {
                 addHTMLSuites(browsers[i], browserURL,
-                        new File[] { suiteFile }, resultDir, timeoutInSeconds);
+                        new File[] { suiteFile }, resultDirByBrowser,
+                        timeoutInSeconds);
             }
         }
     }
@@ -745,26 +779,26 @@ public class MultiHTMLSuiteRunner {
 
     /**
      * @param browser
-     * @param resultDirPath
+     * @param resultDir
      * @return resultDir
      * @throws IOException 
      */
-    private File createResultDir(String browser, String resultDirPath)
+    private File createResultDirByBrowser(String browser, File resultDir)
             throws IOException {
 
-        if (resultDirPath == null) {
+        if (resultDir == null) {
             return null;
         }
 
-        File resultDir = new File(resultDirPath, browser.substring(1)
+        File resultDirByBrowser = new File(resultDir, browser.substring(1)
                 .replaceAll(" .*", ""));
-        if (!resultDir.exists() || !resultDir.isDirectory()) {
-            if (!resultDir.mkdir()) {
+        if (!resultDirByBrowser.exists() || !resultDirByBrowser.isDirectory()) {
+            if (!resultDirByBrowser.mkdir()) {
                 throw new IOException("Can't make Result dir:"
-                        + resultDir.getAbsolutePath());
+                        + resultDirByBrowser.getAbsolutePath());
             }
         }
-        return resultDir;
+        return resultDirByBrowser;
     }
 
     /**
