@@ -85,8 +85,8 @@ public class Config {
     /** default resultDir name */
     private static final String DEFAULT_RESULT_DIR_NAME = "result";
 
-    /** resultPermanent */
-    private boolean resultPermanent = true;
+    /** permanentResult */
+    private boolean permanentResult = true;
 
     /** timeoutInSeconds */
     private int timeoutInSeconds = 60 * 60;
@@ -168,8 +168,8 @@ public class Config {
         resultDir = new File(PropertiesUtils.getString(properties, "resultDir",
                 DEFAULT_RESULT_DIR_NAME));
 
-        resultPermanent = PropertiesUtils.getBoolean(properties,
-                "resultPermanent", resultPermanent);
+        permanentResult = PropertiesUtils.getBoolean(properties,
+                "permanentResult", permanentResult);
 
         timeoutInSeconds = PropertiesUtils.getInt(properties, "timeout",
                 timeoutInSeconds);
@@ -221,17 +221,17 @@ public class Config {
     }
 
     /**
-     * @return resultPermanent
+     * @return permanentResult
      */
-    public boolean isResultPermanent() {
-        return resultPermanent;
+    public boolean isPermanentResult() {
+        return permanentResult;
     }
 
     /**
-     * @param resultPermanent resultPermanent
+     * @param permanentResult permanentResult
      */
-    public void setResultPermanent(boolean resultPermanent) {
-        this.resultPermanent = resultPermanent;
+    public void setPermanentResult(boolean permanentResult) {
+        this.permanentResult = permanentResult;
     }
 
     /**

@@ -419,7 +419,7 @@ public class AutoExecServer {
 
         File resultDir = config.getResultDir();
 
-        if (config.isResultPermanent()) {
+        if (config.isPermanentResult()) {
             resultDir = new File(resultDir, DATE_FORMAT.format(new Date()));
             resultDir.mkdir();
         }
