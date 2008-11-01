@@ -16,6 +16,7 @@
  */
 package com.enjoyxstudy.selenium.autoexec;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -44,6 +45,12 @@ import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
  */
 public class CommandHandler implements HttpHandler {
 
+    /** serialVersionUID */
+    private static final long serialVersionUID = -8717254990316146272L;
+
+    /** logger */
+    static Log log = LogFactory.getLog(CommandHandler.class);
+
     /** SUCCESS */
     private static final String SUCCESS = "success";
 
@@ -71,23 +78,20 @@ public class CommandHandler implements HttpHandler {
     /** LF */
     private static final String LF = "\n";
 
-    /** serialVersionUID */
-    private static final long serialVersionUID = -8717254990316146272L;
-
-    /** logger */
-    static Log log = LogFactory.getLog(CommandHandler.class);
-
     /** type text */
-    private static String TYPE_TEXT = "text";
+    private static final String TYPE_TEXT = "text";
 
     /** type json */
-    private static String TYPE_JSON = "json";
+    private static final String TYPE_JSON = "json";
 
     /** content type text */
     private static final String CONTENT_TYPE_TEXT = "text/plain; charset=utf-8";
 
     /** content type json */
     private static final String CONTENT_TYPE_JSON = "application/x-javascript; charset=utf-8";
+
+    /** url separator */
+    private static final String URL_SEPARATOR = "/";
 
     /** context */
     private HttpContext context;
@@ -98,12 +102,17 @@ public class CommandHandler implements HttpHandler {
     /** autoExecServer */
     AutoExecServer autoExecServer;
 
+    /** base result directory path */
+    private final String baseResultDirPath;
+
     /**
      * @param _autoExecServer
      */
     public CommandHandler(AutoExecServer _autoExecServer) {
         super();
         autoExecServer = _autoExecServer;
+        baseResultDirPath = autoExecServer.getConfig().getResultDir()
+                .getAbsolutePath();
     }
 
     /**
@@ -146,47 +155,37 @@ public class CommandHandler implements HttpHandler {
             throw new HttpException(HttpServletResponse.SC_BAD_REQUEST);
         }
 
-        if (commandName.equals("server/stop")) {
+        try {
+            if (commandName.equals("server/stop")) {
 
-            log.info("Receive command(Stop server).");
+                log.info("Receive command(Stop server).");
 
-            commandServerStop(type, response);
+                commandServerStop(type, response);
 
-        } else if (commandName.equals("run")) {
+            } else if (commandName.equals("run")) {
 
-            log.info("Receive command(Run test).");
+                log.info("Receive command(Run test).");
 
-            try {
                 commandRun(type, response);
-            } catch (Exception e) {
-                throw new HttpException(
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
+            } else if (commandName.equals("run/async")) {
 
-        } else if (commandName.equals("run/async")) {
+                log.info("Receive command(Run test async).");
 
-            log.info("Receive command(Run test async).");
-
-            try {
                 commandRunAsync(type, response);
-            } catch (Exception e) {
-                throw new HttpException(
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
+            } else if (commandName.equals("status")) {
 
-        } else if (commandName.equals("status")) {
+                log.info("Receive command(Get status).");
 
-            log.info("Receive command(Get status).");
-
-            try {
                 commandStatus(type, response);
-            } catch (Exception e) {
-                throw new HttpException(
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+            } else {
+                throw new HttpException(HttpServletResponse.SC_BAD_REQUEST);
             }
 
-        } else {
-            throw new HttpException(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (Exception e) {
+            log.error("Command Error", e);
+            throw new HttpException(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -341,9 +340,8 @@ public class CommandHandler implements HttpHandler {
                 JSONObject suite = new JSONObject();
 
                 suite.put("suiteName", htmlSuite.getSuiteFile().getName());
-                suite.put("resultPath", AutoExecServer.CONTEXT_PATH_RESULT
-                        + htmlSuite.getResultFile().getParentFile().getName()
-                        + "/" + htmlSuite.getResultFile().getName());
+                suite.put("resultPath", createResultFileURL(htmlSuite
+                        .getResultFile()));
                 suite.put("browser", htmlSuite.getBrowser());
                 suite.put("status", selectSuiteStatus(htmlSuite, null));
                 suiteArray.add(suite);
@@ -489,6 +487,21 @@ public class CommandHandler implements HttpHandler {
         Writer writer = new OutputStreamWriter(outputStream, response
                 .getCharacterEncoding());
         return writer;
+    }
+
+    /**
+     * @param resultFile
+     * @return result file URL
+     */
+    private String createResultFileURL(File resultFile) {
+
+        StringBuilder resultFileURL = new StringBuilder(
+                AutoExecServer.CONTEXT_PATH_RESULT);
+        resultFileURL.append(resultFile.getAbsolutePath().substring(
+                baseResultDirPath.length() + URL_SEPARATOR.length()).replace(
+                File.separator, URL_SEPARATOR));
+
+        return resultFileURL.toString();
     }
 
     /**

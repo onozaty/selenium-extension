@@ -19,7 +19,9 @@ package com.enjoyxstudy.selenium.autoexec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -80,6 +82,10 @@ public class AutoExecServer {
 
     /** contents directory */
     private static final String CONTENTS_DIR = "./contents/";
+
+    /** date format for result directory */
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+            "yyyyMMddHHmmss");
 
     /** config */
     private Config config;
@@ -219,13 +225,12 @@ public class AutoExecServer {
 
         HttpContext commandContext = new HttpContext();
         commandContext.setContextPath(CONTEXT_PATH_COMMAND);
-        commandContext.setResourceBase(config.getResultDir());
         commandContext.addHandler(new CommandHandler(this));
         server.addContext(commandContext);
 
         HttpContext resultContext = new HttpContext();
         resultContext.setContextPath(CONTEXT_PATH_RESULT);
-        resultContext.setResourceBase(config.getResultDir());
+        resultContext.setResourceBase(config.getResultDir().getAbsolutePath());
         resultContext.addHandler(new ResourceHandler());
         server.addContext(resultContext);
 
@@ -286,8 +291,10 @@ public class AutoExecServer {
         log.info("Start test process.");
 
         status = STATUS_RUNNING;
-        runner = null;
+        runner = null; // reset
         try {
+
+            File resultDir = getResultDir();
 
             // svn export
             if (config.getSuiteRepo() != null) {
@@ -295,16 +302,16 @@ public class AutoExecServer {
             }
 
             // exec test suite
-            runTestSuite();
+            runTestSuite(resultDir);
 
             // write result index.html
-            writeResultIndexHtml();
+            writeResultIndexHtml(resultDir);
 
             // send result mail
             if (mailConfig.getHost() != null
                     && !mailConfig.getHost().equals("")) {
                 MailSender mailSender = new MailSender(mailConfig);
-                mailSender.send(runner, new File(config.getResultDir()));
+                mailSender.send(runner, resultDir);
             }
 
         } finally {
@@ -328,18 +335,19 @@ public class AutoExecServer {
     }
 
     /**
+     * @param resultDir 
      * @throws IOException
      */
-    private void runTestSuite() throws IOException {
+    private void runTestSuite(File resultDir) throws IOException {
 
         runner = new MultiHTMLSuiteRunner(seleniumServer);
         if (config.isGenerateSuite()) {
             runner.addHTMLSuiteGenerate(config.getBrowsers(), config
-                    .getStartURL(), config.getSuiteDir(),
-                    config.getResultDir(), config.getTimeoutInSeconds());
+                    .getStartURL(), config.getSuiteDir(), resultDir, config
+                    .getTimeoutInSeconds());
         } else {
             runner.addHTMLSuites(config.getBrowsers(), config.getStartURL(),
-                    config.getSuiteDir(), config.getResultDir(), config
+                    config.getSuiteDir(), resultDir, config
                             .getTimeoutInSeconds());
         }
 
@@ -379,7 +387,7 @@ public class AutoExecServer {
      */
     private void exportSuiteRepository() throws IOException, SVNException {
 
-        File suiteDir = new File(config.getSuiteDir());
+        File suiteDir = config.getSuiteDir();
         if (!suiteDir.isAbsolute()) {
             suiteDir = suiteDir.getAbsoluteFile();
         }
@@ -396,11 +404,27 @@ public class AutoExecServer {
     }
 
     /**
+     * @param resultDir 
      * @throws IOException 
      */
-    private void writeResultIndexHtml() throws IOException {
+    private void writeResultIndexHtml(File resultDir) throws IOException {
 
-        resultIndexHtmlWriter.write(config.getResultDir(), runner);
+        resultIndexHtmlWriter.write(resultDir, runner);
+    }
+
+    /**
+     * @return result directory
+     */
+    private File getResultDir() {
+
+        File resultDir = config.getResultDir();
+
+        if (config.isResultPermanent()) {
+            resultDir = new File(resultDir, DATE_FORMAT.format(new Date()));
+            resultDir.mkdir();
+        }
+
+        return resultDir;
     }
 
     /**
@@ -422,6 +446,13 @@ public class AutoExecServer {
      */
     public MultiHTMLSuiteRunner getRunner() {
         return runner;
+    }
+
+    /**
+     * @return config
+     */
+    public Config getConfig() {
+        return config;
     }
 
 }

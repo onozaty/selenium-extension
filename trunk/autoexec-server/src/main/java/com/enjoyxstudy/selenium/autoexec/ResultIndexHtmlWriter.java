@@ -85,12 +85,12 @@ public class ResultIndexHtmlWriter {
      * @param runner
      * @throws IOException
      */
-    public void write(String resultDir, MultiHTMLSuiteRunner runner)
+    public void write(File resultDir, MultiHTMLSuiteRunner runner)
             throws IOException {
 
-        Writer writer = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(resultDir
-                        + File.separator + "index.html"), "UTF-8"));
+        Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(new File(resultDir, "index.html")),
+                "UTF-8"));
         try {
 
             HashMap<String, Object> context = new HashMap<String, Object>();
