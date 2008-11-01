@@ -27,6 +27,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.mortbay.log.LogFactory;
@@ -41,6 +42,17 @@ public class MultiHTMLSuiteRunner {
 
     /** logger */
     private static Log log = LogFactory.getLog(HTMLSuiteLauncher.class);
+
+    /** path separator */
+    private static final String PATH_SEPARATOR = "/";
+
+    /** test suite regexp */
+    static final Pattern TEST_SUITE_REGEXP = Pattern
+            .compile(".*[Ss]uite.*\\.html");
+
+    /** test case regexp */
+    static final Pattern TEST_CASE_REGEXP = Pattern
+            .compile(".*[Cc]ase.*\\.html");
 
     /** SeleniumServer */
     private SeleniumServer server;
@@ -254,12 +266,12 @@ public class MultiHTMLSuiteRunner {
             String testCaseDirPath, String resultDirPath, int timeoutInSeconds)
             throws IOException {
 
-        File suiteFile = generateHTMLSute(new File(testCaseDirPath));
+        File[] suiteFiles = generateHTMLSutes(new File(testCaseDirPath));
 
         for (int i = 0; i < browsers.length; i++) {
             File resultDir = createResultDir(browsers[i], resultDirPath);
-            _addHTMLSuite(browsers[i], browserURL, suiteFile, createResultFile(
-                    resultDir, suiteFile), timeoutInSeconds);
+            addHTMLSuites(browsers[i], browserURL, suiteFiles,
+                    createResultFiles(resultDir, suiteFiles), timeoutInSeconds);
         }
     }
 
@@ -540,7 +552,8 @@ public class MultiHTMLSuiteRunner {
         return suiteDir.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
                 return pathname.isFile()
-                        && pathname.getName().matches(".*[Ss]uite.*\\.html");
+                        && TEST_SUITE_REGEXP.matcher(pathname.getName())
+                                .matches();
             }
         });
     }
@@ -550,7 +563,12 @@ public class MultiHTMLSuiteRunner {
      * @return suiteFile
      * @throws IOException
      */
-    private File generateHTMLSute(File testCaseDir) throws IOException {
+    private File[] generateHTMLSutes(File testCaseDir) throws IOException {
+
+        if (!testCaseDir.exists()) {
+            throw new IOException("Can't find Test Case dir:"
+                    + testCaseDir.getAbsolutePath());
+        }
 
         File suiteFile = null;
         if (!testCaseDir.isDirectory()) {
@@ -558,22 +576,55 @@ public class MultiHTMLSuiteRunner {
             testCaseDir = testCaseDir.getParentFile();
         }
 
-        if (!testCaseDir.exists()) {
-            throw new IOException("Can't find Test Case dir:"
-                    + testCaseDir.getAbsolutePath());
-        }
+        ArrayList<File> testSuiteList = new ArrayList<File>();
 
-        File[] testCaseFiles = testCaseDir.listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
-                return pathname.isFile()
-                        && pathname.getName().matches(".*[Cc]ase.*\\.html");
+        File[] testCaseFiles = collectTestCaseFiles(testCaseDir);
+        if (testCaseFiles.length != 0) {
+
+            if (suiteFile == null) {
+                suiteFile = new File(testCaseDir, "generatedTestSuite.html");
             }
-        });
-        Arrays.sort(testCaseFiles);
+            generateHTMLSute(suiteFile, testCaseFiles, null);
+            testSuiteList.add(suiteFile);
 
-        if (suiteFile == null) {
-            suiteFile = new File(testCaseDir, "generatedTestSuite.html");
+        } else {
+
+            File[] childDirs = testCaseDir.listFiles(new FileFilter() {
+                public boolean accept(File pathname) {
+                    return pathname.isDirectory() && !pathname.isHidden();
+                }
+            });
+            Arrays.sort(childDirs);
+
+            for (File childDir : childDirs) {
+                File childSuiteFile = new File(testCaseDir, childDir.getName()
+                        + ".html");
+                generateHTMLSute(childSuiteFile,
+                        collectTestCaseFiles(childDir), childDir.getName()
+                                + PATH_SEPARATOR);
+                testSuiteList.add(childSuiteFile);
+            }
         }
+
+        log.info("Generate HTMLSuites total count[" + testSuiteList.size()
+                + "]");
+
+        return testSuiteList.toArray(new File[testSuiteList.size()]);
+    }
+
+    /**
+     * @param suiteFile 
+     * @param testCaseFiles 
+     * @param pathDiff 
+     * @throws IOException
+     */
+    private void generateHTMLSute(File suiteFile, File[] testCaseFiles,
+            String pathDiff) throws IOException {
+
+        if (pathDiff == null) {
+            pathDiff = "";
+        }
+
         Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(suiteFile), "UTF-8"));
         try {
@@ -582,13 +633,14 @@ public class MultiHTMLSuiteRunner {
             writer.write("<html><head>");
             writer
                     .write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
-            writer.write("<title>Generated Test Suite</title>");
+            writer.write("<title>" + suiteFile.getName() + "</title>");
             writer.write("</head>");
             writer.write("<body>");
             writer.write("<table border=\"1\">");
-            writer.write("<tr><td>Generated Test Suite</td></tr>");
+            writer.write("<tr><td>" + suiteFile.getName() + "</td></tr>");
             for (File testCase : testCaseFiles) {
-                writer.write("<tr><td><a href=\"" + testCase.getName() + "\">"
+                writer.write("<tr><td><a href=\"./" + pathDiff
+                        + testCase.getName() + "\">" + pathDiff
                         + testCase.getName() + "</a></td></tr>");
             }
             writer.write("</table>");
@@ -599,7 +651,23 @@ public class MultiHTMLSuiteRunner {
         }
         log.info("Generate HTMLSuite[" + suiteFile.getName()
                 + "] testCase count[" + testCaseFiles.length + "]");
-        return suiteFile;
+    }
+
+    /**
+     * @param testCaseDir
+     * @return testCase files
+     */
+    private File[] collectTestCaseFiles(File testCaseDir) {
+
+        File[] testCaseFiles = testCaseDir.listFiles(new FileFilter() {
+            public boolean accept(File pathname) {
+                return pathname.isFile()
+                        && TEST_CASE_REGEXP.matcher(pathname.getName())
+                                .matches();
+            }
+        });
+        Arrays.sort(testCaseFiles);
+        return testCaseFiles;
     }
 
     /**
@@ -614,7 +682,7 @@ public class MultiHTMLSuiteRunner {
         if (resultDir == null) {
             return null;
         }
-        
+
         if (!resultDir.exists() || !resultDir.isDirectory()) {
             throw new IOException("Can't find Result dir:"
                     + resultDir.getAbsolutePath());
