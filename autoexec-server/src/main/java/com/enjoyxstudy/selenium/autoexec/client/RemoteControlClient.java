@@ -29,13 +29,16 @@ import java.net.URL;
 public class RemoteControlClient {
 
     /** type text */
-    private static final String TYPE_TEXT = "text";
+    public static final String TYPE_TEXT = "text";
+
+    /** type JSON */
+    public static final String TYPE_JSON = "json";
 
     /** SUCCESS */
-    private static final String SUCCESS = "success";
+    public static final String SUCCESS = "success";
 
     /** PASSED */
-    private static final String PASSED = "passed";
+    public static final String PASSED = "passed";
 
     /** Selenium AutoExec Server command URL */
     private String commandUrl = "http://localhost:4444/selenium-server/autoexec/command/";
