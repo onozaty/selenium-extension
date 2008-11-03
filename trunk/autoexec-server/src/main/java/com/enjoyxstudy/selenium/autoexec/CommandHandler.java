@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
@@ -92,6 +93,10 @@ public class CommandHandler implements HttpHandler {
 
     /** url separator */
     private static final String URL_SEPARATOR = "/";
+
+    /** date format */
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss");
 
     /** context */
     private HttpContext context;
@@ -293,8 +298,8 @@ public class CommandHandler implements HttpHandler {
             StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.append("status: ").append(status).append(LF);
-            stringBuilder.append("now time: ").append(new Date().toString())
-                    .append(LF);
+            stringBuilder.append("now time: ").append(
+                    DATE_FORMAT.format(new Date())).append(LF);
             addResultString(stringBuilder, autoExecServer.getRunner(),
                     isRunning);
 
@@ -304,7 +309,7 @@ public class CommandHandler implements HttpHandler {
             JSONObject json = new JSONObject();
 
             json.put("status", status);
-            json.put("nowTime", new Date().toString());
+            json.put("nowTime", DATE_FORMAT.format(new Date()));
             addResultJSON(json, autoExecServer.getRunner(), isRunning);
 
             responseText = json.toString();
@@ -330,9 +335,10 @@ public class CommandHandler implements HttpHandler {
             json.put("passedCount", new Integer(runner.getPassedCount()));
             json.put("failedCount", new Integer(runner.getFailedCount()));
 
-            json.put("startTime", new Date(runner.getStartTime()).toString());
-            json.put("endTime", isRunning ? null
-                    : new Date(runner.getEndTime()).toString());
+            json.put("startTime", DATE_FORMAT.format(new Date(runner
+                    .getStartTime())));
+            json.put("endTime", isRunning ? null : DATE_FORMAT.format(new Date(
+                    runner.getEndTime())));
 
             JSONArray suiteArray = new JSONArray();
             for (HTMLSuite htmlSuite : runner.getHtmlSuiteList()) {
@@ -371,10 +377,11 @@ public class CommandHandler implements HttpHandler {
                     runner.getHtmlSuiteList().size()).append(LF);
 
             stringBuilder.append("start time: ").append(
-                    new Date(runner.getStartTime()).toString()).append(LF);
-            stringBuilder.append("end time  : ").append(
-                    isRunning ? "-" : new Date(runner.getEndTime()).toString())
+                    DATE_FORMAT.format(new Date(runner.getStartTime())))
                     .append(LF);
+            stringBuilder.append("end time  : ").append(
+                    isRunning ? "-" : DATE_FORMAT.format(new Date(runner
+                            .getEndTime()))).append(LF);
 
             stringBuilder.append(
                     "----------------------------------------------")
