@@ -25,33 +25,50 @@ import hudson.tasks.Builder;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient;
+import com.enjoyxstudy.selenium.autoexec.hudson.SeleniumAutoExecResult.Suite;
 
 /**
  * @author onozaty
  */
 public class SeleniumAutoExecBuilder extends Builder {
 
-    /** url */
-    private final String url;
+    /** server url */
+    private final String serverUrl;
+
+    /** base url */
+    private final String baseUrl;
 
     /**
-     * @param url
+     * @param serverUrl
+     * @throws MalformedURLException 
      */
-    SeleniumAutoExecBuilder(String url) {
-        this.url = url;
+    SeleniumAutoExecBuilder(String serverUrl) throws MalformedURLException {
+        this.serverUrl = serverUrl;
+
+        URL url = new URL(serverUrl);
+        baseUrl = url.getProtocol()
+                + "://"
+                + url.getHost()
+                + ((url.getPort() != -1) ? ":" + String.valueOf(url.getPort())
+                        : "");
     }
 
     /**
-     * @return url
+     * @return serverUrl
      */
-    public String getUrl() {
-        return url;
+    public String getServerUrl() {
+        return serverUrl;
     }
 
     /**
@@ -64,22 +81,39 @@ public class SeleniumAutoExecBuilder extends Builder {
 
         PrintStream logger = listener.getLogger();
 
-        logger.println("Test Selenium Auto Exec Server(" + url + ").");
+        logger.println("Test Selenium Auto Exec Server(" + serverUrl + ").");
 
-        String result;
+        String resultString;
         try {
-            result = new RemoteControlClient(url.replaceAll("/$", "")
-                    + "/command/").runString();
+            resultString = new RemoteControlClient(serverUrl.replaceAll("/$",
+                    "")
+                    + "/command/").runString(RemoteControlClient.TYPE_JSON);
         } catch (IOException e) {
-            logger.println("Error return from Selenium Auto Exec Server(" + url
-                    + ").");
+            logger.println("Error return from Selenium Auto Exec Server("
+                    + serverUrl + ").");
             throw e;
         }
-        logger.println(result);
 
-        if (!RemoteControlClient.isPassedResult(result)) {
+        SeleniumAutoExecResult result = parseResult(resultString);
+
+        logger.println("result: " + (result.isPassed() ? "passed" : "failed"));
+        logger.println("number of cases: passed: " + result.getPassedCount()
+                + " / failed: " + result.getFailedCount() + " / total: "
+                + result.getTotalCount());
+
+        if (!result.isPassed()) {
             build.setResult(Result.UNSTABLE);
         }
+
+        SeleniumAutoExecAction action = build
+                .getAction(SeleniumAutoExecAction.class);
+
+        if (action == null) {
+            action = new SeleniumAutoExecAction(build);
+            build.addAction(action);
+        }
+        action.getResultList().add(result);
+
         return true;
     }
 
@@ -94,6 +128,47 @@ public class SeleniumAutoExecBuilder extends Builder {
      * Descriptor should be singleton.
      */
     public static DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+    /**
+     * @param resultString
+     * @return result
+     */
+    private SeleniumAutoExecResult parseResult(String resultString) {
+
+        JSONObject resultJson = JSONObject.fromObject(resultString);
+
+        SeleniumAutoExecResult result = new SeleniumAutoExecResult();
+
+        result.setServerUrl(serverUrl);
+        result.setPassed(resultJson.get("result").equals(
+                RemoteControlClient.PASSED));
+        result.setTotalCount(resultJson.getInt("totalCount"));
+        result.setPassedCount(resultJson.getInt("passedCount"));
+        result.setFailedCount(resultJson.getInt("failedCount"));
+        result.setStartTime(resultJson.getString("startTime"));
+        result.setEndTime(resultJson.getString("endTime"));
+
+        JSONArray suitesJson = resultJson.getJSONArray("suites");
+
+        ArrayList<Suite> suites = new ArrayList<Suite>();
+
+        for (Iterator<?> iterator = suitesJson.iterator(); iterator.hasNext();) {
+            JSONObject suiteJson = (JSONObject) iterator.next();
+
+            Suite suite = result.new Suite();
+
+            suite.setSuiteName(suiteJson.getString("suiteName"));
+            suite.setBrowser(suiteJson.getString("browser"));
+            suite.setStatus(suiteJson.getString("status"));
+            suite.setResultPath(baseUrl + suiteJson.getString("resultPath"));
+
+            suites.add(suite);
+        }
+
+        result.setSuites(suites);
+
+        return result;
+    }
 
     /**
      * @author onozaty
@@ -117,14 +192,19 @@ public class SeleniumAutoExecBuilder extends Builder {
         }
 
         /**
+         * @throws FormException 
          * @see hudson.model.Descriptor#newInstance(org.kohsuke.stapler.StaplerRequest, net.sf.json.JSONObject)
          */
         @Override
         public Builder newInstance(StaplerRequest req,
                 @SuppressWarnings("unused")
-                JSONObject formData) {
-            return new SeleniumAutoExecBuilder(req
-                    .getParameter("selenium_autoexec.url"));
+                JSONObject formData) throws FormException {
+            try {
+                return new SeleniumAutoExecBuilder(req
+                        .getParameter("selenium_autoexec.serverUrl"));
+            } catch (MalformedURLException e) {
+                throw new FormException(e, "illegal url");
+            }
         }
     }
 }
