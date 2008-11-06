@@ -16,9 +16,12 @@
  */
 package com.enjoyxstudy.selenium.autoexec;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -294,6 +297,11 @@ public class AutoExecServer {
         runner = null; // reset
         try {
 
+            // execute before command
+            if (config.getBeforeCommand() != null) {
+                executeCommand(config.getBeforeCommand());
+            }
+
             File resultDir = getResultDir();
 
             // svn export
@@ -314,6 +322,11 @@ public class AutoExecServer {
                 mailSender.send(runner, resultDir);
             }
 
+            // execute after command
+            if (config.getAfterCommand() != null) {
+                executeCommand(config.getAfterCommand());
+            }
+
         } finally {
             status = STATUS_IDLE;
         }
@@ -331,6 +344,46 @@ public class AutoExecServer {
 
         while (!isStop) {
             Thread.sleep(RUNNING_LOOP_WAIT);
+        }
+    }
+
+    /**
+     * @param command
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private void executeCommand(String command) throws IOException,
+            InterruptedException {
+
+        log.info("Command command[" + command + "]");
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s"));
+
+        processBuilder.redirectErrorStream(true);
+
+        Process process = processBuilder.start();
+
+        StringWriter output = new StringWriter();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                process.getInputStream()));
+        try {
+            int ch;
+            while ((ch = reader.read()) != -1) {
+                output.write(ch);
+            }
+        } finally {
+            reader.close();
+        }
+
+        int result = process.waitFor();
+
+        log.info("Command returnCode[" + result + "] output["
+                + output.toString() + "]");
+
+        if (result != 0) {
+            throw new IOException("Execute command Error command[" + command
+                    + "] returnCode[" + result + "] output["
+                    + output.toString() + "]");
         }
     }
 

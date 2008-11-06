@@ -94,6 +94,12 @@ public class Config {
     /** autoExecTime */
     private String autoExecTime;
 
+    /** beforeCommand */
+    private String beforeCommand;
+
+    /** afterCommand */
+    private String afterCommand;
+
     /**
      * 
      */
@@ -176,6 +182,12 @@ public class Config {
 
         autoExecTime = PropertiesUtils.getString(properties, "autoExecTime",
                 autoExecTime);
+
+        beforeCommand = PropertiesUtils.getString(properties, "beforeCommand",
+                beforeCommand);
+
+        afterCommand = PropertiesUtils.getString(properties, "afterCommand",
+                afterCommand);
     }
 
     /**
@@ -456,6 +468,34 @@ public class Config {
      */
     public void setFirefoxProfileTemplate(File firefoxProfileTemplate) {
         this.firefoxProfileTemplate = firefoxProfileTemplate;
+    }
+
+    /**
+     * @return beforeCommand
+     */
+    public String getBeforeCommand() {
+        return beforeCommand;
+    }
+
+    /**
+     * @param beforeCommand beforeCommand
+     */
+    public void setBeforeCommand(String beforeCommand) {
+        this.beforeCommand = beforeCommand;
+    }
+
+    /**
+     * @return afterCommand
+     */
+    public String getAfterCommand() {
+        return afterCommand;
+    }
+
+    /**
+     * @param afterCommand afterCommand
+     */
+    public void setAfterCommand(String afterCommand) {
+        this.afterCommand = afterCommand;
     }
 
 }
