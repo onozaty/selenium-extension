@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="junit-test" name="selenium-autoexec-client">
+  <path id="classpath">
+    <pathelement location="selenium-autoexec-client-0.3.jar"/>
+  </path>
+
+  <target name="junit-test">
+    <mkdir dir="junit-dist"/>
+    <junit fork="yes" printsummary="withOutAndErr">
+      <!--<sysproperty key="seleniumaes.async" value="true"/>-->
+      <sysproperty key="seleniumaes.url" value="http://localhost:4444/selenium-server/autoexec/command/"/>
+      <formatter type="plain"/>
+      <test name="com.enjoyxstudy.selenium.autoexec.client.SeleniumAutoExecRemoteTest" todir="junit-dist"/>
+      <classpath refid="classpath"/>
+    </junit>
+  </target>
+
+  <target name="client-test">
+    <java classname="com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient" failonerror="true" fork="yes">
+      <classpath refid="classpath"/>
+      <!--<arg value="-a"/>-->
+      <arg value="http://localhost:4444/selenium-server/autoexec/command/"/>
+    </java>
+  </target>
+
+</project>
