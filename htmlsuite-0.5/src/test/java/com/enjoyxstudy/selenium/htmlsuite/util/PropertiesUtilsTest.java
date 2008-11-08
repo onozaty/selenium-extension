@@ -1,0 +1,126 @@
+/*
+ * Copyright (c) 2007, 2008 onozaty (http://www.enjoyxstudy.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+package com.enjoyxstudy.selenium.htmlsuite.util;
+
+import java.io.InputStream;
+import java.util.Properties;
+
+import junit.framework.TestCase;
+
+/**
+ * PropertiesUtils test case.
+ * 
+ * @author onozaty
+ */
+public class PropertiesUtilsTest extends TestCase {
+
+    /** PROPERTY_FILE */
+    private static final String PROPERTY_FILE = "PropertiesUtilsTest.properties";
+
+    /** properties */
+    private Properties properties;
+
+    /**
+     * @see junit.framework.TestCase#setUp()
+     */
+    @Override
+    protected void setUp() throws Exception {
+
+        super.setUp();
+
+        properties = new Properties();
+        InputStream inputStream = this.getClass().getResourceAsStream(
+                PROPERTY_FILE);
+        try {
+            properties.load(inputStream);
+        } finally {
+            inputStream.close();
+        }
+    }
+
+    /**
+     * test {@link PropertiesUtils#getInt(Properties, String, int)}
+     */
+    public void testGetInt() {
+
+        assertEquals(1, PropertiesUtils.getInt(properties, "intNone", 1));
+        assertEquals(-1, PropertiesUtils.getInt(properties, "intEmpty", -1));
+        assertEquals(1, PropertiesUtils.getInt(properties, "int1", 0));
+        assertEquals(-100, PropertiesUtils.getInt(properties, "int-100", 0));
+    }
+
+    /**
+     * test {@link PropertiesUtils#getBoolean(Properties, String, boolean)}
+     */
+    public void testGetBooleanPropertiesStringBoolean() {
+
+        assertTrue(!PropertiesUtils
+                .getBoolean(properties, "booleanNone", false));
+        assertTrue(!PropertiesUtils.getBoolean(properties, "booleanEmpty",
+                false));
+        assertTrue(PropertiesUtils.getBoolean(properties, "booleanTrue", false));
+        assertTrue(!PropertiesUtils
+                .getBoolean(properties, "booleanFalse", true));
+        assertTrue(!PropertiesUtils.getBoolean(properties, "boolean0", true));
+        assertTrue(!PropertiesUtils.getBoolean(properties, "boolean1", true));
+        assertTrue(!PropertiesUtils
+                .getBoolean(properties, "booleanOther", true));
+    }
+
+    /**
+     * test {@link PropertiesUtils#getBoolean(Properties, String)}
+     */
+    public void testGetBooleanPropertiesString() {
+
+        assertTrue(!PropertiesUtils.getBoolean(properties, "booleanNone"));
+        assertTrue(!PropertiesUtils.getBoolean(properties, "booleanEmpty"));
+        assertTrue(PropertiesUtils.getBoolean(properties, "booleanTrue"));
+        assertTrue(!PropertiesUtils.getBoolean(properties, "booleanFalse"));
+        assertTrue(!PropertiesUtils.getBoolean(properties, "boolean0"));
+        assertTrue(!PropertiesUtils.getBoolean(properties, "boolean1"));
+        assertTrue(!PropertiesUtils.getBoolean(properties, "booleanOther"));
+    }
+
+    /**
+     * test {@link PropertiesUtils#getString(Properties, String, String)}
+     */
+    public void testGetStringPropertiesStringString() {
+
+        assertEquals("none", PropertiesUtils.getString(properties,
+                "stringNone", "none"));
+        assertEquals(null, PropertiesUtils.getString(properties, "stringEmpty",
+                null));
+        assertEquals("", PropertiesUtils.getString(properties, "stringEmpty",
+                ""));
+        assertEquals("hoge", PropertiesUtils.getString(properties,
+                "stringHoge", null));
+    }
+
+    /**
+     * test {@link PropertiesUtils#getString(Properties, String)}
+     */
+    public void testGetStringPropertiesString() {
+
+        assertEquals(null, PropertiesUtils.getString(properties, "stringNone"));
+        assertEquals(null, PropertiesUtils.getString(properties, "stringEmpty"));
+        assertEquals("hoge", PropertiesUtils
+                .getString(properties, "stringHoge"));
+        assertEquals("1234", PropertiesUtils
+                .getString(properties, "string1234"));
+    }
+
+}

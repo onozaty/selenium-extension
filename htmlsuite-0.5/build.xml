@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="antrun" default="dist" basedir=".">
+
+  <property name="lib.dir" value="lib" />
+  <property name="classes.dir" value="classes" />
+
+  <property name="java.dir" value="src/main/java" />
+  <property name="resources.dir" value="src/main/resources" />
+
+  <property name="encoding" value="UTF-8" />
+  <property name="debug" value="on" />
+
+  <property name="jar.dir" value="./" />
+
+  <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
+  <property name="jar.version" value="0.5" />
+
+  <property name="main.class" value="com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner" />
+  <property name="jar.class.path" value="./selenium-server-1.0b1-patch-0.1.jar ./selenium-server-1.0b1.jar" />
+
+  <property name="dist" value="./dist" />
+
+  <path id="class.path">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="clean">
+    <delete dir="${classes.dir}" />
+    <mkdir dir="${classes.dir}" />
+  </target>
+
+  <target name="compile" depends="clean">
+    <javac destdir="${classes.dir}"
+      encoding="${encoding}"
+      verbose="on"
+      debug="${debug}">
+      <src path="${java.dir}"/>
+      <classpath refid="class.path" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <delete>
+      <fileset dir="${jar.dir}/" includes="selenium-ext-htmlsuite-*.jar" />
+    </delete>
+    <property name="build.version" value="${jar.version}" />
+    <jar destfile="${jar.dir}/selenium-ext-htmlsuite-${jar.version}.jar"
+       basedir="${classes.dir}"
+       includes="**">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="${jar.vender}"/>
+        <attribute name="Implementation-Title" value="Selenium HTML Suite Extension"/>
+        <attribute name="Implementation-Version" value="${build.version}"/>
+        <attribute name="Main-Class" value="${main.class}"/>
+        <attribute name="Class-Path" value="${jar.class.path}"/>
+      </manifest>
+    </jar>
+    <jar destfile="${jar.dir}/selenium-ext-htmlsuite-sources-${jar.version}.jar"
+       basedir="${java.dir}"
+       includes="**">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="${jar.vender}"/>
+        <attribute name="Implementation-Title" value="Selenium HTML Suite Extension Source Files"/>
+        <attribute name="Implementation-Version" value="${build.version}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="dist" depends="jar">
+
+    <delete dir="${dist}" />
+    <mkdir dir="${dist}/selenium-ext-htmlsuite-${jar.version}" />
+
+    <copy todir="${dist}/selenium-ext-htmlsuite-${jar.version}">
+      <fileset dir=".">
+        <include name="selenium-ext-htmlsuite-*${jar.version}.jar" />
+        <include name="htmlSuite.properties" />
+        <include name="LICENSE.txt" />
+        <include name="start.bat" />
+      </fileset>
+    </copy>
+
+    <mkdir dir="${dist}/selenium-ext-htmlsuite-${jar.version}/suite" />
+    <copy todir="${dist}/selenium-ext-htmlsuite-${jar.version}/suite">
+      <fileset dir="./suite/pattern1" includes="testCase*.html" />
+    </copy>
+
+    <copy file="./lib/selenium-server-1.0b1.jar" tofile="${dist}/selenium-ext-htmlsuite-${jar.version}/selenium-server-1.0b1.jar" />
+    <copy file="./lib/selenium-server-1.0b1-patch-0.1.jar" tofile="${dist}/selenium-ext-htmlsuite-${jar.version}/selenium-server-1.0b1-patch-0.1.jar" />
+    <mkdir dir="${dist}/selenium-ext-htmlsuite-${jar.version}/result" />
+
+    <zip destfile="selenium-ext-htmlsuite-${jar.version}-dist.zip" basedir="${dist}" />
+
+    <delete dir="${dist}" />
+  </target>
+</project>
