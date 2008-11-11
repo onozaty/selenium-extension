@@ -19,7 +19,7 @@
                 passed
               </j:if>
               <j:if test="${!result.passed}">
-                failed
+                <span class="result-failed">failed</span>
               </j:if>
             </td>
           </tr>
@@ -47,7 +47,14 @@
             <tr>
               <td class="pane"><a href="${suite.resultPath}" target="_blank">${suite.suiteName}</a></td>
               <td class="pane">${suite.browser}</td>
-              <td class="pane">${suite.status}</td>
+              <td class="pane">
+                <j:if test="${suite.passed}">
+                  ${suite.status}
+                </j:if>
+                <j:if test="${!suite.passed}">
+                  <span class="result-failed">${suite.status}</span>
+                </j:if>
+              </td>
             </tr>
           </j:forEach>
         </table>

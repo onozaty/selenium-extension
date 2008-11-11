@@ -19,6 +19,8 @@ package com.enjoyxstudy.selenium.autoexec.hudson;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient;
+
 /**
  * @author onozaty
  */
@@ -237,6 +239,13 @@ public class SeleniumAutoExecResult implements Serializable {
          */
         public void setStatus(String status) {
             this.status = status;
+        }
+
+        /**
+         * @return isPassed
+         */
+        public boolean isPassed() {
+            return RemoteControlClient.PASSED.equals(status);
         }
 
     }
