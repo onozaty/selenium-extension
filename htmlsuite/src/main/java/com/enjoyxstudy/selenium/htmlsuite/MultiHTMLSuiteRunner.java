@@ -176,6 +176,10 @@ public class MultiHTMLSuiteRunner {
             SeleniumServer.setFirefoxProfileTemplate(firefoxProfileTemplate);
         }
 
+        if (PropertiesUtils.getBoolean(properties, "trustAllSSLCertificates")) {
+            SeleniumServer.setTrustAllSSLCertificates(true);
+        }
+
         SeleniumServer seleniumServer = new SeleniumServer(port, false,
                 multiWindow);
 

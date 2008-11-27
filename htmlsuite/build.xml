@@ -13,10 +13,12 @@
   <property name="jar.dir" value="./" />
 
   <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
-  <property name="jar.version" value="0.5" />
+  <property name="jar.version" value="0.6" />
+
+  <property name="seleniumserver.patch.jar" value="selenium-server-1.0b1-patch-0.2.jar" />
 
   <property name="main.class" value="com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner" />
-  <property name="jar.class.path" value="./selenium-server-1.0b1-patch-0.1.jar ./selenium-server-1.0b1.jar" />
+  <property name="jar.class.path" value="./${seleniumserver.patch.jar} ./selenium-server-1.0b1.jar" />
 
   <property name="dist" value="./dist" />
 
@@ -88,7 +90,7 @@
     </copy>
 
     <copy file="./lib/selenium-server-1.0b1.jar" tofile="${dist}/selenium-ext-htmlsuite-${jar.version}/selenium-server-1.0b1.jar" />
-    <copy file="./lib/selenium-server-1.0b1-patch-0.1.jar" tofile="${dist}/selenium-ext-htmlsuite-${jar.version}/selenium-server-1.0b1-patch-0.1.jar" />
+    <copy file="./lib/${seleniumserver.patch.jar}" tofile="${dist}/selenium-ext-htmlsuite-${jar.version}/${seleniumserver.patch.jar}" />
     <mkdir dir="${dist}/selenium-ext-htmlsuite-${jar.version}/result" />
 
     <zip destfile="selenium-ext-htmlsuite-${jar.version}-dist.zip" basedir="${dist}" />
