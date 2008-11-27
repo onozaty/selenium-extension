@@ -13,7 +13,7 @@
   <property name="jar.dir" value="./" />
 
   <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
-  <property name="jar.version" value="0.1" />
+  <property name="jar.version" value="0.2" />
 
   <path id="class.path">
     <fileset dir="${lib.dir}">
