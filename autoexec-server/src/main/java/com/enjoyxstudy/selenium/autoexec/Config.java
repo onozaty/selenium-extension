@@ -100,6 +100,9 @@ public class Config {
     /** afterCommand */
     private String afterCommand;
 
+    /** trustAllSSLCertificates */
+    private boolean trustAllSSLCertificates;
+
     /**
      * 
      */
@@ -188,6 +191,9 @@ public class Config {
 
         afterCommand = PropertiesUtils.getString(properties, "afterCommand",
                 afterCommand);
+
+        trustAllSSLCertificates = PropertiesUtils.getBoolean(properties,
+                "trustAllSSLCertificates", trustAllSSLCertificates);
     }
 
     /**
@@ -496,6 +502,20 @@ public class Config {
      */
     public void setAfterCommand(String afterCommand) {
         this.afterCommand = afterCommand;
+    }
+
+    /**
+     * @return trustAllSSLCertificates
+     */
+    public boolean isTrustAllSSLCertificates() {
+        return trustAllSSLCertificates;
+    }
+
+    /**
+     * @param trustAllSSLCertificates trustAllSSLCertificates
+     */
+    public void setTrustAllSSLCertificates(boolean trustAllSSLCertificates) {
+        this.trustAllSSLCertificates = trustAllSSLCertificates;
     }
 
 }
