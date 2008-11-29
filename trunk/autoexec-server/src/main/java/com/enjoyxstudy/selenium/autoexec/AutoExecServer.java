@@ -189,6 +189,8 @@ public class AutoExecServer {
 
         SeleniumServer.setAvoidProxy(config.isAvoidProxy());
         SeleniumServer.setDebugMode(config.isDebug());
+        SeleniumServer.setTrustAllSSLCertificates(config
+                .isTrustAllSSLCertificates());
 
         if (config.getLog() != null) {
             System.setProperty("selenium.log", config.getLog());

@@ -13,7 +13,7 @@
   <property name="jar.dir" value="./" />
 
   <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
-  <property name="jar.version" value="0.3" />
+  <property name="jar.version" value="0.4" />
 
   <property name="main.class" value="com.enjoyxstudy.selenium.autoexec.AutoExecServer" />
 
@@ -45,7 +45,8 @@
 
   <target name="jar" depends="compile">
     <delete>
-      <fileset dir="${jar.dir}/" includes="selenium-autoexec-server-*.jar" />
+        <fileset dir="${jar.dir}/" includes="selenium-autoexec-server-*.jar" />
+        <fileset dir="${jar.dir}/" includes="selenium-autoexec-client-*.jar" />
     </delete>
     <property name="build.version" value="${jar.version}" />
     <jar destfile="${jar.dir}/selenium-autoexec-server-${jar.version}.jar"
