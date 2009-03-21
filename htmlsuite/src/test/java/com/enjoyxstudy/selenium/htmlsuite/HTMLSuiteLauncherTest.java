@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2008 onozaty (http://www.enjoyxstudy.com)
+ * Copyright (c) 2007 - 2009 onozaty (http://www.enjoyxstudy.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,15 +30,17 @@ public class HTMLSuiteLauncherTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testRunHTMLSuite1() throws Exception {
+    public void testRunHTMLSuiteResult1() throws Exception {
 
         SeleniumServer server = new SeleniumServer();
 
         try {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
-            boolean result = launcher.runHTMLSuite("*firefox",
-                    "http://www.google.com/", "suite/suite1.html", 30);
+            boolean result = launcher.runHTMLSuiteResult("*firefoxproxy",
+                    "http://www.google.com/", new File(
+                            "suite/pattern1/suite1.html"), 30, server
+                            .getConfiguration().isMultiWindow());
 
             assertTrue(result);
             assertEquals("passed", launcher.getResults().getResult());
@@ -51,15 +53,17 @@ public class HTMLSuiteLauncherTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testRunHTMLSuite2() throws Exception {
+    public void testRunHTMLSuiteResult2() throws Exception {
 
         SeleniumServer server = new SeleniumServer();
 
         try {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
-            boolean result = launcher.runHTMLSuite("*firefox",
-                    "http://www.google.com/", "suite/failed2.html", 30);
+            boolean result = launcher.runHTMLSuiteResult("*firefoxproxy",
+                    "http://www.google.com/", new File(
+                            "suite/pattern1/failed2.html"), 30, server
+                            .getConfiguration().isMultiWindow());
 
             assertFalse(result);
             assertEquals("failed", launcher.getResults().getResult());
@@ -72,7 +76,7 @@ public class HTMLSuiteLauncherTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testRunHTMLSuite3() throws Exception {
+    public void testRunHTMLSuiteResult3() throws Exception {
 
         String resultFile = "result/failed1_result.html";
         new File(resultFile).delete();
@@ -82,9 +86,11 @@ public class HTMLSuiteLauncherTest extends TestCase {
         try {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
-            boolean result = launcher.runHTMLSuite("*firefox",
-                    "http://www.google.com/", "suite/failed1.html", resultFile,
-                    30);
+            boolean result = launcher.runHTMLSuiteResult("*firefoxproxy",
+                    "http://www.google.com/", new File(
+                            "suite/pattern1/failed1.html"),
+                    new File(resultFile), 30, server.getConfiguration()
+                            .isMultiWindow());
 
             assertFalse(result);
             assertEquals("failed", launcher.getResults().getResult());

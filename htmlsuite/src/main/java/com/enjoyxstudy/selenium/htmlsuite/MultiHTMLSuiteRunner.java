@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2008 onozaty (http://www.enjoyxstudy.com)
+ * Copyright (c) 2007 - 2009 onozaty (http://www.enjoyxstudy.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,8 +33,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.SeleniumServer;
-
-import com.enjoyxstudy.selenium.htmlsuite.util.PropertiesUtils;
 
 /**
  * @author onozaty
@@ -107,98 +105,46 @@ public class MultiHTMLSuiteRunner {
     public static MultiHTMLSuiteRunner execute(Properties properties)
             throws Exception {
 
-        String[] browsers = PropertiesUtils.getString(properties, "browser")
-                .split(",");
-        String startURL = PropertiesUtils.getString(properties, "startURL");
-        String suite = PropertiesUtils.getString(properties, "suite");
-        boolean generateSuite = PropertiesUtils.getBoolean(properties,
-                "generateSuite");
-        String result = PropertiesUtils.getString(properties, "result");
+        HTMLSuiteConfiguration configuration = HTMLSuiteConfiguration
+                .Load(properties);
 
-        int port = PropertiesUtils.getInt(properties, "port", SeleniumServer
-                .getDefaultPort());
+        SeleniumServer.setAvoidProxy(configuration.isAvoidProxy());
+        SeleniumServer.setDebugMode(configuration.isDebug());
 
-        boolean multiWindow = PropertiesUtils.getBoolean(properties,
-                "multiWindow");
-
-        if (PropertiesUtils.getBoolean(properties, "avoidProxy")) {
-            SeleniumServer.setAvoidProxy(true);
+        if (configuration.getLog() != null) {
+            System.setProperty("selenium.log", configuration.getLog());
         }
 
-        if (PropertiesUtils.getBoolean(properties, "debug")) {
-            SeleniumServer.setDebugMode(true);
+        if (configuration.getProxyHost() != null) {
+            System.setProperty("http.proxyHost", configuration.getProxyHost());
         }
 
-        String logFileName = PropertiesUtils.getString(properties, "log");
-        if (logFileName != null) {
-            System.setProperty("selenium.log", logFileName);
+        if (configuration.getProxyPort() != null) {
+            System.setProperty("http.proxyPort", configuration.getProxyPort());
         }
 
-        File userExtensions = null;
-        String userExtensionsName = PropertiesUtils.getString(properties,
-                "userExtensions");
-        if (userExtensionsName != null) {
-            userExtensions = new File(userExtensionsName);
-            if (!userExtensions.exists()) {
-                throw new RuntimeException(
-                        "User Extensions file doesn't exist: "
-                                + userExtensions.getAbsolutePath());
-            }
-            if (!"user-extensions.js"
-                    .equalsIgnoreCase(userExtensions.getName())) {
-                throw new RuntimeException(
-                        "User extensions file MUST be called \"user-extensions.js\": "
-                                + userExtensions.getAbsolutePath());
-            }
-        }
+        SeleniumServer seleniumServer = new SeleniumServer(configuration);
 
-        int timeoutInSeconds = PropertiesUtils.getInt(properties, "timeout",
-                60 * 60);
-
-        String proxyHost = PropertiesUtils.getString(properties, "proxyHost");
-        if (proxyHost != null) {
-            System.setProperty("http.proxyHost", proxyHost);
+        if (configuration.getUserExtensions() != null) {
+            seleniumServer.addNewStaticContent(configuration
+                    .getUserExtensions().getParentFile());
         }
-        String proxyPort = PropertiesUtils.getString(properties, "proxyPort");
-        if (proxyPort != null) {
-            System.setProperty("http.proxyPort", proxyPort);
-        }
-
-        String firefoxProfileTemplateName = PropertiesUtils.getString(
-                properties, "firefoxProfileTemplate");
-        if (firefoxProfileTemplateName != null) {
-            File firefoxProfileTemplate = new File(firefoxProfileTemplateName);
-            if (!firefoxProfileTemplate.exists()) {
-                throw new RuntimeException(
-                        "Firefox profile template doesn't exist: "
-                                + firefoxProfileTemplate.getAbsolutePath());
-            }
-            SeleniumServer.setFirefoxProfileTemplate(firefoxProfileTemplate);
-        }
-
-        if (PropertiesUtils.getBoolean(properties, "trustAllSSLCertificates")) {
-            SeleniumServer.setTrustAllSSLCertificates(true);
-        }
-
-        SeleniumServer seleniumServer = new SeleniumServer(port, false,
-                multiWindow);
 
         try {
-            if (userExtensions != null) {
-                seleniumServer.addNewStaticContent(userExtensions
-                        .getParentFile());
-            }
-
             seleniumServer.start();
 
             MultiHTMLSuiteRunner htmlSuiteRunner = new MultiHTMLSuiteRunner(
                     seleniumServer);
-            if (generateSuite) {
-                htmlSuiteRunner.addHTMLSuiteGenerate(browsers, startURL, suite,
-                        result, timeoutInSeconds);
+            if (configuration.isGenerateSuite()) {
+                htmlSuiteRunner.addHTMLSuiteGenerate(configuration
+                        .getBrowsers(), configuration.getStartURL(),
+                        configuration.getSuite(), configuration.getResult(),
+                        configuration.getTimeoutInSeconds());
             } else {
-                htmlSuiteRunner.addHTMLSuites(browsers, startURL, suite,
-                        result, timeoutInSeconds);
+                htmlSuiteRunner.addHTMLSuites(configuration.getBrowsers(),
+                        configuration.getStartURL(), configuration.getSuite(),
+                        configuration.getResult(), configuration
+                                .getTimeoutInSeconds());
             }
 
             htmlSuiteRunner.runHTMLSuites();
@@ -497,7 +443,7 @@ public class MultiHTMLSuiteRunner {
 
         for (int i = 0; i < suiteFiles.length; i++) {
             if (!suiteFiles[i].exists() || suiteFiles[i].isDirectory()) {
-                throw new IOException("Can't find Result file:"
+                throw new IOException("Can't find Suite file:"
                         + suiteFiles[i].getAbsolutePath());
             }
             _addHTMLSuite(browser, browserURL, suiteFiles[i],
@@ -546,16 +492,12 @@ public class MultiHTMLSuiteRunner {
             boolean passed = false;
 
             htmlSuite.setStatus(HTMLSuite.STATUS_RUN);
-            if (htmlSuite.getResultFile() != null) {
-                passed = launcher.runHTMLSuite(htmlSuite.getBrowser(),
-                        htmlSuite.getBrowserURL(), htmlSuite.getSuiteFile(),
-                        htmlSuite.getResultFile(), htmlSuite
-                                .getTimeoutInSeconds());
-            } else {
-                passed = launcher.runHTMLSuite(htmlSuite.getBrowser(),
-                        htmlSuite.getBrowserURL(), htmlSuite.getSuiteFile(),
-                        htmlSuite.getTimeoutInSeconds());
-            }
+
+            passed = launcher.runHTMLSuiteResult(htmlSuite.getBrowser(),
+                    htmlSuite.getBrowserURL(), htmlSuite.getSuiteFile(),
+                    htmlSuite.getResultFile(), htmlSuite.getTimeoutInSeconds(),
+                    server.getConfiguration().isMultiWindow());
+
             htmlSuite.setStatus(HTMLSuite.STATUS_FINISH);
 
             htmlSuite.setTestResults(launcher.getResults());
