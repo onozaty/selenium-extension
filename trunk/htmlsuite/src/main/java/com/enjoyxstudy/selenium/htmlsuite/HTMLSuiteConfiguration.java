@@ -229,12 +229,13 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
         configuration.setStartURL(PropertiesUtils.getString(properties,
                 "startURL"));
 
-        configuration.setSuite(PropertiesUtils.getString(properties, "suite"));
+        configuration.setSuite(PropertiesUtils.getString(properties, "suite",
+                configuration.getSuite()));
         configuration.setGenerateSuite(PropertiesUtils.getBoolean(properties,
-                "generateSuite"));
+                "generateSuite", configuration.isGenerateSuite()));
 
-        configuration
-                .setResult(PropertiesUtils.getString(properties, "result"));
+        configuration.setResult(PropertiesUtils.getString(properties, "result",
+                configuration.getResult()));
 
         configuration.setPort(PropertiesUtils.getInt(properties, "port",
                 getDefaultPort()));
