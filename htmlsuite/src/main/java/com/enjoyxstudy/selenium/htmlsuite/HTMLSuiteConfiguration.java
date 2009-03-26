@@ -213,6 +213,17 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
 
         HTMLSuiteConfiguration configuration = new HTMLSuiteConfiguration();
 
+        return Load(configuration, properties);
+    }
+
+    /**
+     * @param configuration 
+     * @param properties
+     * @return configuration
+     */
+    public static HTMLSuiteConfiguration Load(
+            HTMLSuiteConfiguration configuration, Properties properties) {
+
         configuration.setBrowsers(PropertiesUtils.getString(properties,
                 "browser").split(","));
         configuration.setStartURL(PropertiesUtils.getString(properties,
