@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2008 onozaty (http://www.enjoyxstudy.com)
+ * Copyright (c) 2007 - 2009 onozaty (http://www.enjoyxstudy.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,11 +34,12 @@ import org.mortbay.http.HttpContext;
 import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.Server;
 import org.mortbay.log.LogFactory;
+import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.tmatesoft.svn.core.SVNException;
 
 import com.enjoyxstudy.selenium.autoexec.client.RemoteControlClient;
-import com.enjoyxstudy.selenium.autoexec.mail.MailConfig;
+import com.enjoyxstudy.selenium.autoexec.mail.MailConfiguration;
 import com.enjoyxstudy.selenium.autoexec.mail.MailSender;
 import com.enjoyxstudy.selenium.autoexec.util.FileUtils;
 import com.enjoyxstudy.selenium.autoexec.util.SVNUtils;
@@ -90,11 +91,11 @@ public class AutoExecServer {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
             "yyyyMMddHHmmss");
 
-    /** config */
-    private Config config;
+    /** configuration */
+    private AutoExecServerConfiguration configuration;
 
-    /** mailConfig */
-    private MailConfig mailConfig;
+    /** mailConfiguration */
+    private MailConfiguration mailConfiguration;
 
     /** seleniumServer */
     private SeleniumServer seleniumServer;
@@ -167,7 +168,7 @@ public class AutoExecServer {
 
             StringBuilder commandURL = new StringBuilder("http://localhost:");
             commandURL.append(PropertiesUtils.getInt(properties, "port",
-                    SeleniumServer.DEFAULT_PORT));
+                    RemoteControlConfiguration.getDefaultPort()));
             commandURL.append(CONTEXT_PATH_COMMAND);
 
             RemoteControlClient client = new RemoteControlClient(commandURL
@@ -185,39 +186,31 @@ public class AutoExecServer {
      */
     public void startup(Properties properties) throws Exception {
 
-        config = new Config(properties);
+        configuration = new AutoExecServerConfiguration(properties);
 
-        SeleniumServer.setAvoidProxy(config.isAvoidProxy());
-        SeleniumServer.setDebugMode(config.isDebug());
-        SeleniumServer.setTrustAllSSLCertificates(config
-                .isTrustAllSSLCertificates());
+        SeleniumServer.setAvoidProxy(configuration.isAvoidProxy());
+        SeleniumServer.setDebugMode(configuration.isDebug());
 
-        if (config.getLog() != null) {
-            System.setProperty("selenium.log", config.getLog());
+        if (configuration.getLog() != null) {
+            System.setProperty("selenium.log", configuration.getLog());
         }
 
-        if (config.getProxyHost() != null) {
-            System.setProperty("http.proxyHost", config.getProxyHost());
+        if (configuration.getProxyHost() != null) {
+            System.setProperty("http.proxyHost", configuration.getProxyHost());
         }
 
-        if (config.getProxyPort() != null) {
-            System.setProperty("http.proxyPort", config.getProxyPort());
+        if (configuration.getProxyPort() != null) {
+            System.setProperty("http.proxyPort", configuration.getProxyPort());
         }
 
-        if (config.getFirefoxProfileTemplate() != null) {
-            SeleniumServer.setFirefoxProfileTemplate(config
-                    .getFirefoxProfileTemplate());
+        seleniumServer = new SeleniumServer(configuration);
+
+        if (configuration.getUserExtensions() != null) {
+            seleniumServer.addNewStaticContent(configuration
+                    .getUserExtensions().getParentFile());
         }
 
-        seleniumServer = new SeleniumServer(config.getPort(), false, config
-                .isMultiWindow());
-
-        if (config.getUserExtensions() != null) {
-            seleniumServer.addNewStaticContent(config.getUserExtensions()
-                    .getParentFile());
-        }
-
-        mailConfig = new MailConfig(properties);
+        mailConfiguration = new MailConfiguration(properties);
 
         Server server = seleniumServer.getServer();
 
@@ -235,16 +228,17 @@ public class AutoExecServer {
 
         HttpContext resultContext = new HttpContext();
         resultContext.setContextPath(CONTEXT_PATH_RESULT);
-        resultContext.setResourceBase(config.getResultDir().getAbsolutePath());
+        resultContext.setResourceBase(configuration.getResultDir()
+                .getAbsolutePath());
         resultContext.addHandler(new ResourceHandler());
         server.addContext(resultContext);
 
         seleniumServer.start();
 
-        if (config.getAutoExecTime() != null) {
+        if (configuration.getAutoExecTime() != null) {
             // set auto exec timer
 
-            String[] time = config.getAutoExecTime().split(":");
+            String[] time = configuration.getAutoExecTime().split(":");
 
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
@@ -300,14 +294,14 @@ public class AutoExecServer {
         try {
 
             // execute before command
-            if (config.getBeforeCommand() != null) {
-                executeCommand(config.getBeforeCommand());
+            if (configuration.getBeforeCommand() != null) {
+                executeCommand(configuration.getBeforeCommand());
             }
 
             File resultDir = getResultDir();
 
             // svn export
-            if (config.getSuiteRepo() != null) {
+            if (configuration.getSuiteRepo() != null) {
                 exportSuiteRepository();
             }
 
@@ -318,15 +312,15 @@ public class AutoExecServer {
             writeResultIndexHtml(resultDir);
 
             // send result mail
-            if (mailConfig.getHost() != null
-                    && !mailConfig.getHost().equals("")) {
-                MailSender mailSender = new MailSender(mailConfig);
+            if (mailConfiguration.getHost() != null
+                    && !mailConfiguration.getHost().equals("")) {
+                MailSender mailSender = new MailSender(mailConfiguration);
                 mailSender.send(runner, resultDir);
             }
 
             // execute after command
-            if (config.getAfterCommand() != null) {
-                executeCommand(config.getAfterCommand());
+            if (configuration.getAfterCommand() != null) {
+                executeCommand(configuration.getAfterCommand());
             }
 
         } finally {
@@ -396,14 +390,14 @@ public class AutoExecServer {
     private void runTestSuite(File resultDir) throws IOException {
 
         runner = new MultiHTMLSuiteRunner(seleniumServer);
-        if (config.isGenerateSuite()) {
-            runner.addHTMLSuiteGenerate(config.getBrowsers(), config
-                    .getStartURL(), config.getSuiteDir(), resultDir, config
-                    .getTimeoutInSeconds());
+        if (configuration.isGenerateSuite()) {
+            runner.addHTMLSuiteGenerate(configuration.getBrowsers(),
+                    configuration.getStartURL(), configuration.getSuiteDir(),
+                    resultDir, configuration.getTimeoutInSeconds());
         } else {
-            runner.addHTMLSuites(config.getBrowsers(), config.getStartURL(),
-                    config.getSuiteDir(), resultDir, config
-                            .getTimeoutInSeconds());
+            runner.addHTMLSuites(configuration.getBrowsers(), configuration
+                    .getStartURL(), configuration.getSuiteDir(), resultDir,
+                    configuration.getTimeoutInSeconds());
         }
 
         runner.runHTMLSuites();
@@ -442,7 +436,7 @@ public class AutoExecServer {
      */
     private void exportSuiteRepository() throws IOException, SVNException {
 
-        File suiteDir = config.getSuiteDir();
+        File suiteDir = configuration.getSuiteDir();
         if (!suiteDir.isAbsolute()) {
             suiteDir = suiteDir.getAbsoluteFile();
         }
@@ -452,9 +446,9 @@ public class AutoExecServer {
             FileUtils.deleteDirectory(suiteDir);
         }
 
-        SVNUtils.export(config.getSuiteRepo(), suiteDir, config
-                .getSuiteRepoUsername(), config.getSuiteRepoPassword());
-        log.info("Suite Export repository[" + config.getSuiteRepo()
+        SVNUtils.export(configuration.getSuiteRepo(), suiteDir, configuration
+                .getSuiteRepoUsername(), configuration.getSuiteRepoPassword());
+        log.info("Suite Export repository[" + configuration.getSuiteRepo()
                 + "] dist=[" + suiteDir.getPath() + "]");
     }
 
@@ -472,9 +466,9 @@ public class AutoExecServer {
      */
     private File getResultDir() {
 
-        File resultDir = config.getResultDir();
+        File resultDir = configuration.getResultDir();
 
-        if (config.isPermanentResult()) {
+        if (configuration.isPermanentResult()) {
             resultDir = new File(resultDir, DATE_FORMAT.format(new Date()));
             resultDir.mkdir();
         }
@@ -504,10 +498,10 @@ public class AutoExecServer {
     }
 
     /**
-     * @return config
+     * @return configuration
      */
-    public Config getConfig() {
-        return config;
+    public AutoExecServerConfiguration getConfiguration() {
+        return configuration;
     }
 
 }

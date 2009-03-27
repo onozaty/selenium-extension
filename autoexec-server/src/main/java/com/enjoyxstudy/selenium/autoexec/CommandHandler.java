@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2008 onozaty (http://www.enjoyxstudy.com)
+ * Copyright (c) 2007 - 2009 onozaty (http://www.enjoyxstudy.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ public class CommandHandler implements HttpHandler {
     public CommandHandler(AutoExecServer _autoExecServer) {
         super();
         autoExecServer = _autoExecServer;
-        baseResultDirPath = autoExecServer.getConfig().getResultDir()
+        baseResultDirPath = autoExecServer.getConfiguration().getResultDir()
                 .getAbsolutePath();
     }
 

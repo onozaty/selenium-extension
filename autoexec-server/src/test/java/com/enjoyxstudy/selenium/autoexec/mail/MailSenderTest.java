@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2008 onozaty (http://www.enjoyxstudy.com)
+ * Copyright (c) 2007 - 2009 onozaty (http://www.enjoyxstudy.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,19 +34,19 @@ public class MailSenderTest extends TestCase {
      */
     public void testSend() throws Exception {
 
-        MailConfig config = new MailConfig();
-        config.setHost("smtp.gmail.com");
-        config.setPort(465);
-        config.setSsl(true);
-        config.setDebug(true);
-        config.setTo("selenium.extension@gmail.com");
-        config.setFrom("selenium.extension@gmail.com");
-        config.setUsername("selenium.extension@gmail.com");
-        config.setPassword("");
-        config.setSubject("subject");
-        config.setBody("body");
+        MailConfiguration configuration = new MailConfiguration();
+        configuration.setHost("smtp.gmail.com");
+        configuration.setPort(465);
+        configuration.setSsl(true);
+        configuration.setDebug(true);
+        configuration.setTo("selenium.extension@gmail.com");
+        configuration.setFrom("selenium.extension@gmail.com");
+        configuration.setUsername("selenium.extension@gmail.com");
+        configuration.setPassword("");
+        configuration.setSubject("subject");
+        configuration.setBody("body");
 
-        MailSender sender = new MailSender(config);
+        MailSender sender = new MailSender(configuration);
 
         MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(null);
         sender.send(runner, new File("work/result"));
