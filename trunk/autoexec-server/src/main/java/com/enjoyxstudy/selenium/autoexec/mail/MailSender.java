@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2008 onozaty (http://www.enjoyxstudy.com)
+ * Copyright (c) 2007 - 2009 onozaty (http://www.enjoyxstudy.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class MailSender {
     private static Log log = LogFactory.getLog(MailSender.class);
 
     /** config */
-    private MailConfig config;
+    private MailConfiguration config;
 
     /** session */
     private Session session;
@@ -64,7 +64,7 @@ public class MailSender {
      * @param config
      * @throws Exception
      */
-    public MailSender(final MailConfig config) throws Exception {
+    public MailSender(final MailConfiguration config) throws Exception {
 
         this.config = config;
 

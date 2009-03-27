@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="junit-test" name="selenium-autoexec-client">
   <path id="classpath">
-    <pathelement location="selenium-autoexec-client-0.3.jar"/>
+    <pathelement location="selenium-autoexec-client-0.5-SNAPSHOT.jar"/>
   </path>
 
   <target name="junit-test">
