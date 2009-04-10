@@ -546,15 +546,15 @@ public class MultiHTMLSuiteRunner {
      */
     private File[] generateHTMLSutes(File testCaseDir) throws IOException {
 
-        if (!testCaseDir.exists()) {
-            throw new IOException("Can't find Test Case dir:"
-                    + testCaseDir.getAbsolutePath());
-        }
-
         File suiteFile = null;
         if (!testCaseDir.isDirectory()) {
             suiteFile = testCaseDir;
             testCaseDir = testCaseDir.getParentFile();
+        }
+
+        if (!testCaseDir.exists()) {
+            throw new IOException("Can't find Test Case dir:"
+                    + testCaseDir.getAbsolutePath());
         }
 
         ArrayList<File> testSuiteList = new ArrayList<File>();
