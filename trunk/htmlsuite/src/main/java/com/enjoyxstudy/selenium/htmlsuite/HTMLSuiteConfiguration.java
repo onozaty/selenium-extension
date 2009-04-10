@@ -49,9 +49,6 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     /** debug */
     private boolean debug;
 
-    /** log */
-    private String log;
-
     /** proxyHost */
     private String proxyHost;
 
@@ -164,20 +161,6 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @return log
-     */
-    public String getLog() {
-        return log;
-    }
-
-    /**
-     * @param log log
-     */
-    public void setLog(String log) {
-        this.log = log;
-    }
-
-    /**
      * @return proxyHost
      */
     public String getProxyHost() {
@@ -246,8 +229,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
         configuration.setDebug(PropertiesUtils.getBoolean(properties, "debug",
                 configuration.isDebug()));
 
-        configuration.setLog(PropertiesUtils.getString(properties, "log",
-                configuration.getLog()));
+        configuration.setLogOutFileName(PropertiesUtils.getString(properties, "log",
+                configuration.getLogOutFileName()));
 
         File userExtensions = null;
         String userExtensionsName = PropertiesUtils.getString(properties,
