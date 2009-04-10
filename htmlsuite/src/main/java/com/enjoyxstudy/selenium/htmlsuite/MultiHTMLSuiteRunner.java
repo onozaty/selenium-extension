@@ -108,20 +108,15 @@ public class MultiHTMLSuiteRunner {
         HTMLSuiteConfiguration configuration = HTMLSuiteConfiguration
                 .Load(properties);
 
-        SeleniumServer.setAvoidProxy(configuration.isAvoidProxy());
-        SeleniumServer.setDebugMode(configuration.isDebug());
-
-        if (configuration.getLog() != null) {
-            System.setProperty("selenium.log", configuration.getLog());
-        }
-
         if (configuration.getProxyHost() != null) {
             System.setProperty("http.proxyHost", configuration.getProxyHost());
         }
-
         if (configuration.getProxyPort() != null) {
             System.setProperty("http.proxyPort", configuration.getProxyPort());
         }
+
+        SeleniumServer.setAvoidProxy(configuration.isAvoidProxy());
+        SeleniumServer.setDebugMode(configuration.isDebug());
 
         SeleniumServer seleniumServer = new SeleniumServer(configuration);
 
