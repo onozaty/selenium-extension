@@ -13,7 +13,7 @@
   <property name="jar.dir" value="./" />
 
   <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
-  <property name="jar.version" value="0.7-SNAPSHOT" />
+  <property name="jar.version" value="0.7" />
 
   <property name="main.class" value="com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner" />
   <property name="jar.class.path" value="./selenium-server-1.0b2.jar" />
