@@ -222,8 +222,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
 
         configuration.setPort(PropertiesUtils.getInt(properties, "port",
                 getDefaultPort()));
-        configuration.setMultiWindow(PropertiesUtils.getBoolean(properties,
-                "multiWindow", configuration.isMultiWindow()));
+        configuration.setMultiWindow(!PropertiesUtils.getBoolean(properties,
+                "singleWindow", !configuration.isMultiWindow()));
         configuration.setAvoidProxy(PropertiesUtils.getBoolean(properties,
                 "avoidProxy", configuration.isAvoidProxy()));
         configuration.setDebug(PropertiesUtils.getBoolean(properties, "debug",
