@@ -188,20 +188,15 @@ public class AutoExecServer {
 
         configuration = new AutoExecServerConfiguration(properties);
 
-        SeleniumServer.setAvoidProxy(configuration.isAvoidProxy());
-        SeleniumServer.setDebugMode(configuration.isDebug());
-
-        if (configuration.getLog() != null) {
-            System.setProperty("selenium.log", configuration.getLog());
-        }
-
         if (configuration.getProxyHost() != null) {
             System.setProperty("http.proxyHost", configuration.getProxyHost());
         }
-
         if (configuration.getProxyPort() != null) {
             System.setProperty("http.proxyPort", configuration.getProxyPort());
         }
+
+        SeleniumServer.setAvoidProxy(configuration.isAvoidProxy());
+        SeleniumServer.setDebugMode(configuration.isDebug());
 
         seleniumServer = new SeleniumServer(configuration);
 
