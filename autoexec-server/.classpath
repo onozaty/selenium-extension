@@ -16,7 +16,7 @@
 	<classpathentry kind="lib" path="lib/ezmorph-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib-2.2.2-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.7.0.jar"/>
-	<classpathentry kind="lib" path="lib/selenium-ext-htmlsuite-0.7-SNAPSHOT.jar" sourcepath="lib/selenium-ext-htmlsuite-sources-0.7-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/selenium-server-1.0b2.jar" sourcepath="lib/selenium-server-sources-1.0b2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium-ext-htmlsuite-0.7.jar" sourcepath="lib/selenium-ext-htmlsuite-sources-0.7.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
