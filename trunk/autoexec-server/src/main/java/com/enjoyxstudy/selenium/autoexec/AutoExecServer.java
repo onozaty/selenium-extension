@@ -114,7 +114,7 @@ public class AutoExecServer {
 
     /**
      * @param args
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
 
@@ -133,7 +133,7 @@ public class AutoExecServer {
 
         String propertyFile = DEFAULT_PROPERTY_FILE_NAME; // default
         if (args.length == 2) {
-            propertyFile = args[0];
+            propertyFile = args[1];
         }
         final Properties properties = new Properties();
         FileInputStream inputStream = new FileInputStream(propertyFile);
@@ -180,9 +180,9 @@ public class AutoExecServer {
 
     /**
      * server startup.
-     * 
-     * @param properties 
-     * @throws Exception 
+     *
+     * @param properties
+     * @throws Exception
      */
     public void startup(Properties properties) throws Exception {
 
@@ -194,9 +194,6 @@ public class AutoExecServer {
         if (configuration.getProxyPort() != null) {
             System.setProperty("http.proxyPort", configuration.getProxyPort());
         }
-
-        SeleniumServer.setAvoidProxy(configuration.isAvoidProxy());
-        SeleniumServer.setDebugMode(configuration.isDebug());
 
         seleniumServer = new SeleniumServer(configuration);
 
@@ -276,9 +273,9 @@ public class AutoExecServer {
 
     /**
      * process.
-     * 
+     *
      * @return HTMLSuite runner
-     * @throws Exception 
+     * @throws Exception
      */
     public synchronized MultiHTMLSuiteRunner process() throws Exception {
 
@@ -328,8 +325,8 @@ public class AutoExecServer {
     }
 
     /**
-     * 
-     * @throws InterruptedException 
+     *
+     * @throws InterruptedException
      */
     public void runningLoop() throws InterruptedException {
 
@@ -379,7 +376,7 @@ public class AutoExecServer {
     }
 
     /**
-     * @param resultDir 
+     * @param resultDir
      * @throws IOException
      */
     private void runTestSuite(File resultDir) throws IOException {
@@ -448,8 +445,8 @@ public class AutoExecServer {
     }
 
     /**
-     * @param resultDir 
-     * @throws IOException 
+     * @param resultDir
+     * @throws IOException
      */
     private void writeResultIndexHtml(File resultDir) throws IOException {
 
