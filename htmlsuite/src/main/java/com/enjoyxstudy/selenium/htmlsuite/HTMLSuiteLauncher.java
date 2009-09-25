@@ -51,12 +51,12 @@ public class HTMLSuiteLauncher extends HTMLLauncher {
 
     /**
      * Launches a single HTML Selenium test suite.
-     * 
+     *
      * @param browser - the browserString ("*firefox", "*iexplore" or an executable path)
      * @param browserURL - the start URL for the browser
      * @param suiteFile - a file containing the HTML suite to run
      * @param timeoutInSeconds - the amount of time (in seconds) to wait for the browser to finish
-     * @param multiWindow 
+     * @param multiWindow
      * @return result
      * @throws IOException if we can't read the write file
      */
@@ -70,13 +70,13 @@ public class HTMLSuiteLauncher extends HTMLLauncher {
 
     /**
      * Launches a single HTML Selenium test suite.
-     * 
+     *
      * @param browser - the browserString ("*firefox", "*iexplore" or an executable path)
      * @param browserURL - the start URL for the browser
      * @param suiteFile - a file containing the HTML suite to run
      * @param resultFile - The file to which we'll output the HTML results
      * @param timeoutInSeconds - the amount of time (in seconds) to wait for the browser to finish
-     * @param multiWindow 
+     * @param multiWindow
      * @return result
      * @throws IOException if we can't read the write file
      */
@@ -123,8 +123,8 @@ public class HTMLSuiteLauncher extends HTMLLauncher {
     }
 
     /**
-     * Accepts HTMLTestResults for later asynchronous handling 
-     * @param resultsParm 
+     * Accepts HTMLTestResults for later asynchronous handling
+     * @param resultsParm
      */
     @Override
     public void processResults(HTMLTestResults resultsParm) {
@@ -135,6 +135,7 @@ public class HTMLSuiteLauncher extends HTMLLauncher {
     /**
      * @return results
      */
+    @Override
     public HTMLTestResults getResults() {
         return results;
     }
