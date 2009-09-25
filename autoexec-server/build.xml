@@ -13,7 +13,7 @@
   <property name="jar.dir" value="./" />
 
   <property name="jar.vender" value="onozaty - http://www.enjoyxstudy.com/" />
-  <property name="jar.version" value="0.5" />
+  <property name="jar.version" value="1.0" />
 
   <property name="main.class" value="com.enjoyxstudy.selenium.autoexec.AutoExecServer" />
 
