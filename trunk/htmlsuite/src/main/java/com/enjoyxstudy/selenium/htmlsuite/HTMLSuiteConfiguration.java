@@ -43,12 +43,6 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     /** result */
     private String result;
 
-    /** avoidProxy */
-    private boolean avoidProxy;
-
-    /** debug */
-    private boolean debug;
-
     /** proxyHost */
     private String proxyHost;
 
@@ -56,7 +50,7 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     private String proxyPort;
 
     /**
-     * 
+     *
      */
     public HTMLSuiteConfiguration() {
         super();
@@ -133,34 +127,6 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @return avoidProxy
-     */
-    public boolean isAvoidProxy() {
-        return avoidProxy;
-    }
-
-    /**
-     * @param avoidProxy avoidProxy
-     */
-    public void setAvoidProxy(boolean avoidProxy) {
-        this.avoidProxy = avoidProxy;
-    }
-
-    /**
-     * @return debug
-     */
-    public boolean isDebug() {
-        return debug;
-    }
-
-    /**
-     * @param debug debug
-     */
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
-    /**
      * @return proxyHost
      */
     public String getProxyHost() {
@@ -200,7 +166,7 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @param configuration 
+     * @param configuration
      * @param properties
      * @return configuration
      */
@@ -222,12 +188,12 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
 
         configuration.setPort(PropertiesUtils.getInt(properties, "port",
                 getDefaultPort()));
-        configuration.setMultiWindow(!PropertiesUtils.getBoolean(properties,
-                "singleWindow", !configuration.isMultiWindow()));
+        configuration.setSingleWindow(PropertiesUtils.getBoolean(properties,
+                "singleWindow", configuration.isSingleWindow()));
         configuration.setAvoidProxy(PropertiesUtils.getBoolean(properties,
                 "avoidProxy", configuration.isAvoidProxy()));
-        configuration.setDebug(PropertiesUtils.getBoolean(properties, "debug",
-                configuration.isDebug()));
+        configuration.setDebugMode((PropertiesUtils.getBoolean(properties, "debug",
+                configuration.isDebugMode())));
 
         configuration.setLogOutFileName(PropertiesUtils.getString(properties, "log",
                 configuration.getLogOutFileName()));

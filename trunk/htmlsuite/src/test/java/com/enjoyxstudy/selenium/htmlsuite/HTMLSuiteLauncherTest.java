@@ -37,10 +37,10 @@ public class HTMLSuiteLauncherTest extends TestCase {
         try {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
-            boolean result = launcher.runHTMLSuiteResult("*firefoxproxy",
+            boolean result = launcher.runHTMLSuiteResult("*firefox",
                     "http://www.google.com/", new File(
-                            "suite/pattern1/suite1.html"), 30, server
-                            .getConfiguration().isMultiWindow());
+                            "suite/pattern1/suite1.html"), 30, !server
+                            .getConfiguration().isSingleWindow());
 
             assertTrue(result);
             assertEquals("passed", launcher.getResults().getResult());
@@ -60,10 +60,10 @@ public class HTMLSuiteLauncherTest extends TestCase {
         try {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
-            boolean result = launcher.runHTMLSuiteResult("*firefoxproxy",
+            boolean result = launcher.runHTMLSuiteResult("*firefox",
                     "http://www.google.com/", new File(
-                            "suite/pattern1/failed2.html"), 30, server
-                            .getConfiguration().isMultiWindow());
+                            "suite/pattern1/failed2.html"), 30, !server
+                            .getConfiguration().isSingleWindow());
 
             assertFalse(result);
             assertEquals("failed", launcher.getResults().getResult());
@@ -86,11 +86,11 @@ public class HTMLSuiteLauncherTest extends TestCase {
         try {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
-            boolean result = launcher.runHTMLSuiteResult("*firefoxproxy",
+            boolean result = launcher.runHTMLSuiteResult("*firefox",
                     "http://www.google.com/", new File(
                             "suite/pattern1/failed1.html"),
-                    new File(resultFile), 30, server.getConfiguration()
-                            .isMultiWindow());
+                    new File(resultFile), 30, !server.getConfiguration()
+                            .isSingleWindow());
 
             assertFalse(result);
             assertEquals("failed", launcher.getResults().getResult());

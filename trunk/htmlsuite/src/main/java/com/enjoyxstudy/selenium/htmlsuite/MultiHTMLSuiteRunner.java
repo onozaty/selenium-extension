@@ -76,7 +76,7 @@ public class MultiHTMLSuiteRunner {
 
     /**
      * @param args
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
 
@@ -98,9 +98,9 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param properties 
+     * @param properties
      * @return MultiHTMLSuiteRunner
-     * @throws Exception 
+     * @throws Exception
      */
     public static MultiHTMLSuiteRunner execute(Properties properties)
             throws Exception {
@@ -114,9 +114,6 @@ public class MultiHTMLSuiteRunner {
         if (configuration.getProxyPort() != null) {
             System.setProperty("http.proxyPort", configuration.getProxyPort());
         }
-
-        SeleniumServer.setAvoidProxy(configuration.isAvoidProxy());
-        SeleniumServer.setDebugMode(configuration.isDebug());
 
         SeleniumServer seleniumServer = new SeleniumServer(configuration);
 
@@ -187,11 +184,11 @@ public class MultiHTMLSuiteRunner {
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param browsers 
-     * @param browserURL 
-     * @param testCaseDirPath 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browsers
+     * @param browserURL
+     * @param testCaseDirPath
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuiteGenerate(String[] browsers, String browserURL,
             String testCaseDirPath, int timeoutInSeconds) throws IOException {
@@ -201,12 +198,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browsers 
-     * @param browserURL 
-     * @param testCaseDirPath 
-     * @param resultDirPath 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browsers
+     * @param browserURL
+     * @param testCaseDirPath
+     * @param resultDirPath
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuiteGenerate(String[] browsers, String browserURL,
             String testCaseDirPath, String resultDirPath, int timeoutInSeconds)
@@ -217,12 +214,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browsers 
-     * @param browserURL 
-     * @param testCaseDir 
+     * @param browsers
+     * @param browserURL
+     * @param testCaseDir
      * @param resultDir
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuiteGenerate(String[] browsers, String browserURL,
             File testCaseDir, File resultDir, int timeoutInSeconds)
@@ -242,11 +239,11 @@ public class MultiHTMLSuiteRunner {
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param browsers 
-     * @param browserURL 
-     * @param suitePath 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browsers
+     * @param browserURL
+     * @param suitePath
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuites(String[] browsers, String browserURL,
             String suitePath, int timeoutInSeconds) throws IOException {
@@ -255,12 +252,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browsers 
-     * @param browserURL 
-     * @param suitePath 
-     * @param resultDirPath 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browsers
+     * @param browserURL
+     * @param suitePath
+     * @param resultDirPath
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuites(String[] browsers, String browserURL,
             String suitePath, String resultDirPath, int timeoutInSeconds)
@@ -271,12 +268,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browsers 
-     * @param browserURL 
-     * @param suiteFile 
-     * @param resultDir 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browsers
+     * @param browserURL
+     * @param suiteFile
+     * @param resultDir
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuites(String[] browsers, String browserURL,
             File suiteFile, File resultDir, int timeoutInSeconds)
@@ -300,11 +297,11 @@ public class MultiHTMLSuiteRunner {
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteDirPath 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browser
+     * @param browserURL
+     * @param suiteDirPath
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuiteDir(String browser, String browserURL,
             String suiteDirPath, int timeoutInSeconds) throws IOException {
@@ -314,12 +311,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteDirPath 
-     * @param resultDirPath 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browser
+     * @param browserURL
+     * @param suiteDirPath
+     * @param resultDirPath
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuiteDir(String browser, String browserURL,
             String suiteDirPath, String resultDirPath, int timeoutInSeconds)
@@ -330,11 +327,11 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteDir 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browser
+     * @param browserURL
+     * @param suiteDir
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuiteDir(String browser, String browserURL,
             File suiteDir, int timeoutInSeconds) throws IOException {
@@ -343,12 +340,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteDir 
-     * @param resultDir 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browser
+     * @param browserURL
+     * @param suiteDir
+     * @param resultDir
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuiteDir(String browser, String browserURL,
             File suiteDir, File resultDir, int timeoutInSeconds)
@@ -365,11 +362,11 @@ public class MultiHTMLSuiteRunner {
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteFilePaths 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browser
+     * @param browserURL
+     * @param suiteFilePaths
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuites(String browser, String browserURL,
             String[] suiteFilePaths, int timeoutInSeconds) throws IOException {
@@ -379,12 +376,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteFilePaths 
-     * @param resultDirPath 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browser
+     * @param browserURL
+     * @param suiteFilePaths
+     * @param resultDirPath
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuites(String browser, String browserURL,
             String[] suiteFilePaths, String resultDirPath, int timeoutInSeconds)
@@ -395,11 +392,11 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteFiles 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browser
+     * @param browserURL
+     * @param suiteFiles
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuites(String browser, String browserURL,
             File[] suiteFiles, int timeoutInSeconds) throws IOException {
@@ -409,12 +406,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-    * @param browser 
-    * @param browserURL 
-    * @param suiteFiles 
-    * @param resultDir 
-    * @param timeoutInSeconds 
-    * @throws IOException 
+    * @param browser
+    * @param browserURL
+    * @param suiteFiles
+    * @param resultDir
+    * @param timeoutInSeconds
+    * @throws IOException
     */
     public void addHTMLSuites(String browser, String browserURL,
             File[] suiteFiles, File resultDir, int timeoutInSeconds)
@@ -425,12 +422,12 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteFiles 
-     * @param resultFiles 
-     * @param timeoutInSeconds 
-     * @throws IOException 
+     * @param browser
+     * @param browserURL
+     * @param suiteFiles
+     * @param resultFiles
+     * @param timeoutInSeconds
+     * @throws IOException
      */
     public void addHTMLSuites(String browser, String browserURL,
             File[] suiteFiles, File[] resultFiles, int timeoutInSeconds)
@@ -450,11 +447,11 @@ public class MultiHTMLSuiteRunner {
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param browser 
-     * @param browserURL 
-     * @param suiteFile 
-     * @param resultFile 
-     * @param timeoutInSeconds 
+     * @param browser
+     * @param browserURL
+     * @param suiteFile
+     * @param resultFile
+     * @param timeoutInSeconds
      */
     private void _addHTMLSuite(String browser, String browserURL,
             File suiteFile, File resultFile, int timeoutInSeconds) {
@@ -491,7 +488,7 @@ public class MultiHTMLSuiteRunner {
             passed = launcher.runHTMLSuiteResult(htmlSuite.getBrowser(),
                     htmlSuite.getBrowserURL(), htmlSuite.getSuiteFile(),
                     htmlSuite.getResultFile(), htmlSuite.getTimeoutInSeconds(),
-                    server.getConfiguration().isMultiWindow());
+                    !server.getConfiguration().isSingleWindow());
 
             htmlSuite.setStatus(HTMLSuite.STATUS_FINISH);
 
@@ -516,7 +513,7 @@ public class MultiHTMLSuiteRunner {
     /**
      * @param suiteDir
      * @return suiteFiles
-     * @throws IOException 
+     * @throws IOException
      */
     private File[] collectSuiteFiles(File suiteDir) throws IOException {
 
@@ -589,9 +586,9 @@ public class MultiHTMLSuiteRunner {
     }
 
     /**
-     * @param suiteFile 
-     * @param testCaseFiles 
-     * @param pathDiff 
+     * @param suiteFile
+     * @param testCaseFiles
+     * @param pathDiff
      * @throws IOException
      */
     private void generateHTMLSute(File suiteFile, File[] testCaseFiles,
@@ -650,7 +647,7 @@ public class MultiHTMLSuiteRunner {
      * @param resultDir
      * @param suiteFiles
      * @return resultFiles
-     * @throws IOException 
+     * @throws IOException
      */
     private File[] createResultFiles(File resultDir, File[] suiteFiles)
             throws IOException {
@@ -723,7 +720,7 @@ public class MultiHTMLSuiteRunner {
      * @param browser
      * @param resultDir
      * @return resultDir
-     * @throws IOException 
+     * @throws IOException
      */
     private File createResultDirByBrowser(String browser, File resultDir)
             throws IOException {
