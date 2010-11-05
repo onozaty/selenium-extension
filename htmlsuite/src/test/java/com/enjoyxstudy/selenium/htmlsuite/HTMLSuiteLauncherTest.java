@@ -38,7 +38,7 @@ public class HTMLSuiteLauncherTest extends TestCase {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
             boolean result = launcher.runHTMLSuiteResult("*firefox",
-                    "http://www.google.com/", new File(
+                    "http://www.enjoyxstudy.com/", new File(
                             "suite/pattern1/suite1.html"), 30, !server
                             .getConfiguration().isSingleWindow());
 
@@ -61,7 +61,7 @@ public class HTMLSuiteLauncherTest extends TestCase {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
             boolean result = launcher.runHTMLSuiteResult("*firefox",
-                    "http://www.google.com/", new File(
+                    "http://www.enjoyxstudy.com/", new File(
                             "suite/pattern1/failed2.html"), 30, !server
                             .getConfiguration().isSingleWindow());
 
@@ -87,7 +87,7 @@ public class HTMLSuiteLauncherTest extends TestCase {
             server.start();
             HTMLSuiteLauncher launcher = new HTMLSuiteLauncher(server);
             boolean result = launcher.runHTMLSuiteResult("*firefox",
-                    "http://www.google.com/", new File(
+                    "http://www.enjoyxstudy.com/", new File(
                             "suite/pattern1/failed1.html"),
                     new File(resultFile), 30, !server.getConfiguration()
                             .isSingleWindow());
