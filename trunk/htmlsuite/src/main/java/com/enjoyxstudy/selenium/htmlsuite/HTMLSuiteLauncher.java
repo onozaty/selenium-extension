@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
-import org.mortbay.log.LogFactory;
+import org.openqa.jetty.log.LogFactory;
 import org.openqa.selenium.server.SeleniumServer;
 import org.openqa.selenium.server.htmlrunner.HTMLLauncher;
 import org.openqa.selenium.server.htmlrunner.HTMLTestResults;
