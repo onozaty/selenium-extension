@@ -133,7 +133,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuites(new String[] { "*firefox", "*iexplore" },
+            runner.addHTMLSuites(new String[] { "*firefox", "*piiexplore" },
                     "http://www.enjoyxstudy.com/", "suite/pattern1", 30);
 
             assertTrue(runner.runHTMLSuites());
@@ -163,21 +163,21 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
 
             assertEquals("suite1.html", runner.getHtmlSuiteList().get(3)
                     .getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(3)
+            assertEquals("*piiexplore", runner.getHtmlSuiteList().get(3)
                     .getBrowser());
             assertEquals("passed", runner.getHtmlSuiteList().get(3)
                     .getTestResults().getResult());
 
             assertEquals("suite2.html", runner.getHtmlSuiteList().get(4)
                     .getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(4)
+            assertEquals("*piiexplore", runner.getHtmlSuiteList().get(4)
                     .getBrowser());
             assertEquals("passed", runner.getHtmlSuiteList().get(4)
                     .getTestResults().getResult());
 
             assertEquals("suite3.html", runner.getHtmlSuiteList().get(5)
                     .getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(5)
+            assertEquals("*piiexplore", runner.getHtmlSuiteList().get(5)
                     .getBrowser());
             assertEquals("passed", runner.getHtmlSuiteList().get(5)
                     .getTestResults().getResult());
@@ -198,7 +198,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuites(new String[] { "*iexplore", },
+            runner.addHTMLSuites(new String[] { "*piiexplore", },
                     "http://www.enjoyxstudy.com/", "suite/pattern1/suite1.html", 30);
 
             assertTrue(runner.runHTMLSuites());
@@ -206,7 +206,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
 
             assertEquals("suite1.html", runner.getHtmlSuiteList().get(0)
                     .getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(0)
+            assertEquals("*piiexplore", runner.getHtmlSuiteList().get(0)
                     .getBrowser());
             assertEquals("passed", runner.getHtmlSuiteList().get(0)
                     .getTestResults().getResult());
@@ -231,7 +231,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuites(new String[] { "*iexplore", "*firefox" },
+            runner.addHTMLSuites(new String[] { "*piiexplore", "*firefox" },
                     "http://www.enjoyxstudy.com/", "suite/pattern1/suite1.html",
                     "result", 30);
 
@@ -240,7 +240,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
 
             assertEquals("suite1.html", runner.getHtmlSuiteList().get(0)
                     .getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(0)
+            assertEquals("*piiexplore", runner.getHtmlSuiteList().get(0)
                     .getBrowser());
             assertEquals("passed", runner.getHtmlSuiteList().get(0)
                     .getTestResults().getResult());
@@ -363,7 +363,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
             runner.addHTMLSuiteGenerate(
-                    new String[] { "*firefox", "*iexplore" },
+                    new String[] { "*firefox", "*piiexplore" },
                     "http://www.enjoyxstudy.com/", "suite/pattern1", 60);
 
             assertFalse(runner.runHTMLSuites());
@@ -378,7 +378,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
 
             assertEquals("generatedTestSuite.html", runner.getHtmlSuiteList()
                     .get(1).getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(1)
+            assertEquals("*piiexplore", runner.getHtmlSuiteList().get(1)
                     .getBrowser());
             assertEquals("failed", runner.getHtmlSuiteList().get(1)
                     .getTestResults().getResult());
@@ -402,7 +402,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
         try {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
-            runner.addHTMLSuiteGenerate(new String[] { "*iexplore" },
+            runner.addHTMLSuiteGenerate(new String[] { "*piiexplore" },
                     "http://www.enjoyxstudy.com/", "suite/pattern1", "result", 60);
 
             assertFalse(runner.runHTMLSuites());
@@ -410,7 +410,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
 
             assertEquals("generatedTestSuite.html", runner.getHtmlSuiteList()
                     .get(0).getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(0)
+            assertEquals("*piiexplore", runner.getHtmlSuiteList().get(0)
                     .getBrowser());
             assertEquals("failed", runner.getHtmlSuiteList().get(0)
                     .getTestResults().getResult());
@@ -434,7 +434,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
             server.start();
             MultiHTMLSuiteRunner runner = new MultiHTMLSuiteRunner(server);
             runner.addHTMLSuiteGenerate(
-                    new String[] { "*iexplore", "*firefox" },
+                    new String[] { "*piiexplore", "*firefox" },
                     "http://www.enjoyxstudy.com/", "suite", "result", 60);
 
             assertFalse(runner.runHTMLSuites());
@@ -442,7 +442,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
 
             assertEquals("pattern1.html", runner.getHtmlSuiteList().get(0)
                     .getSuiteFile().getName());
-            assertEquals("*iexplore", runner.getHtmlSuiteList().get(0)
+            assertEquals("*piiexplore", runner.getHtmlSuiteList().get(0)
                     .getBrowser());
             assertEquals("failed", runner.getHtmlSuiteList().get(0)
                     .getTestResults().getResult());
