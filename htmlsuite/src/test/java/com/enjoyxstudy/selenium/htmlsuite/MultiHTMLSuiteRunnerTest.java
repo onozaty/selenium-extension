@@ -221,7 +221,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
      */
     public void testAddHTMLSuites6() throws Exception {
 
-        String resultFile1 = "result/iexplore/suite1_result.html";
+        String resultFile1 = "result/piiexplore/suite1_result.html";
         new File(resultFile1).delete();
         String resultFile2 = "result/firefox/suite1_result.html";
         new File(resultFile2).delete();
@@ -395,7 +395,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
      */
     public void testAddHTMLSuiteGenerate2() throws Exception {
 
-        String resultFile1 = "result/iexplore/generatedTestSuite_result.html";
+        String resultFile1 = "result/piiexplore/generatedTestSuite_result.html";
         new File(resultFile1).delete();
         SeleniumServer server = new SeleniumServer();
 
@@ -426,7 +426,7 @@ public class MultiHTMLSuiteRunnerTest extends TestCase {
      */
     public void testAddHTMLSuiteGenerate3() throws Exception {
 
-        String resultFile1 = "result/iexplore/pattern1_result.html";
+        String resultFile1 = "result/piiexplore/pattern1_result.html";
         new File(resultFile1).delete();
         SeleniumServer server = new SeleniumServer();
 
