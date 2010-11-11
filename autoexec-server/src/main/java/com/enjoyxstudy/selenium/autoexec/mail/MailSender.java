@@ -37,7 +37,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.logging.Log;
-import org.mortbay.log.LogFactory;
+import org.openqa.jetty.log.LogFactory;
 
 import com.enjoyxstudy.selenium.autoexec.util.TemplateUtils;
 import com.enjoyxstudy.selenium.autoexec.util.ZipUtils;
@@ -106,10 +106,10 @@ public class MailSender {
     }
 
     /**
-     * @param runner 
+     * @param runner
      * @param resultDir
      * @throws MessagingException
-     * @throws IOException 
+     * @throws IOException
      */
     public void send(MultiHTMLSuiteRunner runner, File resultDir)
             throws MessagingException, IOException {
@@ -165,7 +165,7 @@ public class MailSender {
     /**
      * @param resultDir
      * @return archive file
-     * @throws IOException 
+     * @throws IOException
      */
     private File createResultArchive(File resultDir) throws IOException {
 

@@ -30,10 +30,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.handler.ResourceHandler;
-import org.mortbay.jetty.Server;
-import org.mortbay.log.LogFactory;
+import org.openqa.jetty.http.HttpContext;
+import org.openqa.jetty.http.handler.ResourceHandler;
+import org.openqa.jetty.jetty.Server;
+import org.openqa.jetty.log.LogFactory;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.tmatesoft.svn.core.SVNException;
