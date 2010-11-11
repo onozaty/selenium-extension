@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.mortbay.log.LogFactory;
+import org.openqa.jetty.log.LogFactory;
 
 /**
  * @author onozaty
@@ -65,7 +65,7 @@ public final class TemplateUtils {
     /**
      * @param input
      * @param context
-     * @param out 
+     * @param out
      */
     public static void merge(String input, Map<String, Object> context,
             Writer out) {
@@ -99,7 +99,7 @@ class TemplateRuntimeException extends RuntimeException {
     private static final long serialVersionUID = -7341917516834914989L;
 
     /**
-     * 
+     *
      */
     public TemplateRuntimeException() {
         super();

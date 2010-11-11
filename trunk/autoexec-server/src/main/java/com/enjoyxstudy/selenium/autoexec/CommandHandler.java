@@ -31,12 +31,12 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.HttpException;
-import org.mortbay.http.HttpHandler;
-import org.mortbay.http.HttpRequest;
-import org.mortbay.http.HttpResponse;
-import org.mortbay.log.LogFactory;
+import org.openqa.jetty.http.HttpContext;
+import org.openqa.jetty.http.HttpException;
+import org.openqa.jetty.http.HttpHandler;
+import org.openqa.jetty.http.HttpRequest;
+import org.openqa.jetty.http.HttpResponse;
+import org.openqa.jetty.log.LogFactory;
 
 import com.enjoyxstudy.selenium.htmlsuite.HTMLSuite;
 import com.enjoyxstudy.selenium.htmlsuite.MultiHTMLSuiteRunner;
@@ -121,11 +121,11 @@ public class CommandHandler implements HttpHandler {
     }
 
     /**
-     * @see org.mortbay.http.HttpHandler#handle(java.lang.String, java.lang.String, org.mortbay.http.HttpRequest, org.mortbay.http.HttpResponse)
+     * @see org.openqa.jetty.http.HttpHandler#handle(java.lang.String, java.lang.String, org.openqa.jetty.http.HttpRequest, org.openqa.jetty.http.HttpResponse)
      */
-    public void handle(String pathInContext, @SuppressWarnings("unused")
-    String pathParams, HttpRequest request, HttpResponse response)
-            throws HttpException, IOException {
+    public void handle(String pathInContext, String pathParams,
+            HttpRequest request, HttpResponse response) throws HttpException,
+            IOException {
 
         request.setHandled(true);
 
@@ -140,12 +140,12 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * handle command.
-     * 
+     *
      * @param commandName
      * @param request
      * @param response
      * @throws HttpException
-     * @throws IOException 
+     * @throws IOException
      */
     private void command(String commandName, HttpRequest request,
             HttpResponse response) throws HttpException, IOException {
@@ -196,7 +196,7 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * stop server command.
-     * 
+     *
      * @param type
      * @param response
      * @throws IOException
@@ -211,10 +211,10 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * run command.
-     * 
+     *
      * @param type
      * @param response
-     * @throws Exception 
+     * @throws Exception
      */
     private void commandRun(String type, HttpResponse response)
             throws Exception {
@@ -248,7 +248,7 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * run async command.
-     * 
+     *
      * @param type
      * @param response
      * @throws IOException
@@ -280,10 +280,10 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * status command.
-     * 
+     *
      * @param type
      * @param response
-     * @throws IOException 
+     * @throws IOException
      */
     private void commandStatus(String type, HttpResponse response)
             throws IOException {
@@ -319,7 +319,7 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * result to json.
-     * 
+     *
      * @param json
      * @param runner
      * @param isRunning
@@ -358,7 +358,7 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * result to String.
-     * 
+     *
      * @param stringBuilder
      * @param runner
      * @param isRunning
@@ -404,9 +404,9 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * select suite status.
-     * 
+     *
      * @param htmlSuite
-     * @param defaultStatus 
+     * @param defaultStatus
      * @return suite status
      */
     private String selectSuiteStatus(HTMLSuite htmlSuite, String defaultStatus) {
@@ -431,7 +431,7 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * result to response.
-     * 
+     *
      * @param response
      * @param text
      * @param type
@@ -454,7 +454,7 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * text to response.
-     * 
+     *
      * @param response
      * @param text
      * @param type
@@ -482,7 +482,7 @@ public class CommandHandler implements HttpHandler {
 
     /**
      * return response writer.
-     * 
+     *
      * @param response
      * @return response writer
      * @throws UnsupportedEncodingException
@@ -512,42 +512,42 @@ public class CommandHandler implements HttpHandler {
     }
 
     /**
-     * @see org.mortbay.http.HttpHandler#initialize(org.mortbay.http.HttpContext)
+     * @see org.openqa.jetty.http.HttpHandler#initialize(org.openqa.jetty.http.HttpContext)
      */
     public void initialize(HttpContext _context) {
         context = _context;
     }
 
     /**
-     * @see org.mortbay.http.HttpHandler#getHttpContext()
+     * @see org.openqa.jetty.http.HttpHandler#getHttpContext()
      */
     public HttpContext getHttpContext() {
         return context;
     }
 
     /**
-     * @see org.mortbay.http.HttpHandler#getName()
+     * @see org.openqa.jetty.http.HttpHandler#getName()
      */
     public String getName() {
         return CommandHandler.class.getName();
     }
 
     /**
-     * @see org.mortbay.util.LifeCycle#isStarted()
+     * @see org.openqa.jetty.util.LifeCycle#isStarted()
      */
     public boolean isStarted() {
         return isStarted;
     }
 
     /**
-     * @see org.mortbay.util.LifeCycle#start()
+     * @see org.openqa.jetty.util.LifeCycle#start()
      */
     public void start() {
         isStarted = true;
     }
 
     /**
-     * @see org.mortbay.util.LifeCycle#stop()
+     * @see org.openqa.jetty.util.LifeCycle#stop()
      */
     public void stop() {
         isStarted = false;
