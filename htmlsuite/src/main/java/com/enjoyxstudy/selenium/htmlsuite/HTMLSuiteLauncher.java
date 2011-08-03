@@ -81,7 +81,7 @@ public class HTMLSuiteLauncher extends HTMLLauncher {
      * @throws IOException if we can't read the write file
      */
     public boolean runHTMLSuiteResult(String browser, String browserURL,
-            File suiteFile, File resultFile, int timeoutInSeconds,
+            File suiteFile, File resultFile, long timeoutInSeconds,
             boolean multiWindow) throws IOException {
 
         log.info("HTML Suite Start. suite[" + suiteFile + "] browser["

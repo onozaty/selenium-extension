@@ -48,7 +48,7 @@ public class HTMLSuite implements Serializable {
     private String browserURL;
 
     /** timeoutInSeconds */
-    private int timeoutInSeconds;
+    private long timeoutInSeconds;
 
     /** testResults */
     private HTMLTestResults testResults;
@@ -135,14 +135,14 @@ public class HTMLSuite implements Serializable {
     /**
      * @return timeoutInSeconds
      */
-    public int getTimeoutInSeconds() {
+    public long getTimeoutInSeconds() {
         return timeoutInSeconds;
     }
 
     /**
      * @param timeoutInSeconds
      */
-    public void setTimeoutInSeconds(int timeoutInSeconds) {
+    public void setTimeoutInSeconds(long timeoutInSeconds) {
         this.timeoutInSeconds = timeoutInSeconds;
     }
 

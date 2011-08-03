@@ -128,15 +128,16 @@ public class MultiHTMLSuiteRunner {
             MultiHTMLSuiteRunner htmlSuiteRunner = new MultiHTMLSuiteRunner(
                     seleniumServer);
             if (configuration.isGenerateSuite()) {
-                htmlSuiteRunner.addHTMLSuiteGenerate(configuration
-                        .getBrowsers(), configuration.getStartURL(),
-                        configuration.getSuite(), configuration.getResult(),
+                htmlSuiteRunner.addHTMLSuiteGenerate(
+                        configuration.getBrowsers(),
+                        configuration.getStartURL(), configuration.getSuite(),
+                        configuration.getResult(),
                         configuration.getTimeoutInSeconds());
             } else {
                 htmlSuiteRunner.addHTMLSuites(configuration.getBrowsers(),
                         configuration.getStartURL(), configuration.getSuite(),
-                        configuration.getResult(), configuration
-                                .getTimeoutInSeconds());
+                        configuration.getResult(),
+                        configuration.getTimeoutInSeconds());
             }
 
             htmlSuiteRunner.runHTMLSuites();
@@ -206,7 +207,7 @@ public class MultiHTMLSuiteRunner {
      * @throws IOException
      */
     public void addHTMLSuiteGenerate(String[] browsers, String browserURL,
-            String testCaseDirPath, String resultDirPath, int timeoutInSeconds)
+            String testCaseDirPath, String resultDirPath, long timeoutInSeconds)
             throws IOException {
 
         addHTMLSuiteGenerate(browsers, browserURL, new File(testCaseDirPath),
@@ -222,7 +223,7 @@ public class MultiHTMLSuiteRunner {
      * @throws IOException
      */
     public void addHTMLSuiteGenerate(String[] browsers, String browserURL,
-            File testCaseDir, File resultDir, int timeoutInSeconds)
+            File testCaseDir, File resultDir, long timeoutInSeconds)
             throws IOException {
 
         File[] suiteFiles = generateHTMLSutes(testCaseDir);
@@ -260,7 +261,7 @@ public class MultiHTMLSuiteRunner {
      * @throws IOException
      */
     public void addHTMLSuites(String[] browsers, String browserURL,
-            String suitePath, String resultDirPath, int timeoutInSeconds)
+            String suitePath, String resultDirPath, long timeoutInSeconds)
             throws IOException {
 
         addHTMLSuites(browsers, browserURL, new File(suitePath),
@@ -276,7 +277,7 @@ public class MultiHTMLSuiteRunner {
      * @throws IOException
      */
     public void addHTMLSuites(String[] browsers, String browserURL,
-            File suiteFile, File resultDir, int timeoutInSeconds)
+            File suiteFile, File resultDir, long timeoutInSeconds)
             throws IOException {
 
         for (int i = 0; i < browsers.length; i++) {
@@ -348,7 +349,7 @@ public class MultiHTMLSuiteRunner {
      * @throws IOException
      */
     public void addHTMLSuiteDir(String browser, String browserURL,
-            File suiteDir, File resultDir, int timeoutInSeconds)
+            File suiteDir, File resultDir, long timeoutInSeconds)
             throws IOException {
 
         File[] suiteFiles = collectSuiteFiles(suiteDir);
@@ -399,26 +400,26 @@ public class MultiHTMLSuiteRunner {
      * @throws IOException
      */
     public void addHTMLSuites(String browser, String browserURL,
-            File[] suiteFiles, int timeoutInSeconds) throws IOException {
+            File[] suiteFiles, long timeoutInSeconds) throws IOException {
 
         addHTMLSuites(browser, browserURL, suiteFiles, (File) null,
                 timeoutInSeconds);
     }
 
     /**
-    * @param browser
-    * @param browserURL
-    * @param suiteFiles
-    * @param resultDir
-    * @param timeoutInSeconds
-    * @throws IOException
-    */
+     * @param browser
+     * @param browserURL
+     * @param suiteFiles
+     * @param resultDir
+     * @param timeoutInSeconds
+     * @throws IOException
+     */
     public void addHTMLSuites(String browser, String browserURL,
-            File[] suiteFiles, File resultDir, int timeoutInSeconds)
+            File[] suiteFiles, File resultDir, long timeoutInSeconds)
             throws IOException {
 
-        addHTMLSuites(browser, browserURL, suiteFiles, createResultFiles(
-                resultDir, suiteFiles), timeoutInSeconds);
+        addHTMLSuites(browser, browserURL, suiteFiles,
+                createResultFiles(resultDir, suiteFiles), timeoutInSeconds);
     }
 
     /**
@@ -430,7 +431,7 @@ public class MultiHTMLSuiteRunner {
      * @throws IOException
      */
     public void addHTMLSuites(String browser, String browserURL,
-            File[] suiteFiles, File[] resultFiles, int timeoutInSeconds)
+            File[] suiteFiles, File[] resultFiles, long timeoutInSeconds)
             throws IOException {
 
         for (int i = 0; i < suiteFiles.length; i++) {
@@ -454,7 +455,7 @@ public class MultiHTMLSuiteRunner {
      * @param timeoutInSeconds
      */
     private void _addHTMLSuite(String browser, String browserURL,
-            File suiteFile, File resultFile, int timeoutInSeconds) {
+            File suiteFile, File resultFile, long timeoutInSeconds) {
 
         HTMLSuite htmlSuite = new HTMLSuite();
         htmlSuite.setBrowser(browser);
@@ -601,11 +602,9 @@ public class MultiHTMLSuiteRunner {
         Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(suiteFile), "UTF-8"));
         try {
-            writer
-                    .write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
+            writer.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
             writer.write("<html><head>");
-            writer
-                    .write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
+            writer.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
             writer.write("<title>" + suiteFile.getName() + "</title>");
             writer.write("</head>");
             writer.write("<body>");
