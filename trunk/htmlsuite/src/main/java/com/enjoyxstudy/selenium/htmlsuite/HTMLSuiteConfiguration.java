@@ -64,7 +64,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @param browsers browsers
+     * @param browsers
+     *            browsers
      */
     public void setBrowsers(String[] browsers) {
         this.browsers = browsers;
@@ -78,7 +79,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @param startURL startURL
+     * @param startURL
+     *            startURL
      */
     public void setStartURL(String startURL) {
         this.startURL = startURL;
@@ -92,7 +94,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @param suite suite
+     * @param suite
+     *            suite
      */
     public void setSuite(String suite) {
         this.suite = suite;
@@ -106,7 +109,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @param generateSuite generateSuite
+     * @param generateSuite
+     *            generateSuite
      */
     public void setGenerateSuite(boolean generateSuite) {
         this.generateSuite = generateSuite;
@@ -120,7 +124,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @param result result
+     * @param result
+     *            result
      */
     public void setResult(String result) {
         this.result = result;
@@ -134,7 +139,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @param proxyHost proxyHost
+     * @param proxyHost
+     *            proxyHost
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -148,7 +154,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
     }
 
     /**
-     * @param proxyPort proxyPort
+     * @param proxyPort
+     *            proxyPort
      */
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
@@ -192,11 +199,11 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
                 "singleWindow", configuration.isSingleWindow()));
         configuration.setAvoidProxy(PropertiesUtils.getBoolean(properties,
                 "avoidProxy", configuration.isAvoidProxy()));
-        configuration.setDebugMode((PropertiesUtils.getBoolean(properties, "debug",
-                configuration.isDebugMode())));
+        configuration.setDebugMode((PropertiesUtils.getBoolean(properties,
+                "debug", configuration.isDebugMode())));
 
-        configuration.setLogOutFileName(PropertiesUtils.getString(properties, "log",
-                configuration.getLogOutFileName()));
+        configuration.setLogOutFileName(PropertiesUtils.getString(properties,
+                "log", configuration.getLogOutFileName()));
 
         File userExtensions = null;
         String userExtensionsName = PropertiesUtils.getString(properties,
@@ -218,7 +225,7 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
         }
 
         configuration.setTimeoutInSeconds(PropertiesUtils.getInt(properties,
-                "timeout", configuration.getTimeoutInSeconds()));
+                "timeout", (int) configuration.getTimeoutInSeconds()));
 
         configuration.setProxyHost(PropertiesUtils.getString(properties,
                 "proxyHost", configuration.getProxyHost()));
@@ -238,8 +245,8 @@ public class HTMLSuiteConfiguration extends RemoteControlConfiguration {
         }
 
         configuration.setTrustAllSSLCertificates(PropertiesUtils.getBoolean(
-                properties, "trustAllSSLCertificates", configuration
-                        .trustAllSSLCertificates()));
+                properties, "trustAllSSLCertificates",
+                configuration.trustAllSSLCertificates()));
 
         return configuration;
     }
