@@ -1,0 +1,53 @@
+The idea is to use SeleniumHTMLRunnerResultsHandler.java. Then we can store data into a database (mysql).
+
+In settings.properties 4 additional variables.
+databaseUrl = 192.168.1.1:3669
+database user = root
+database pass = root
+database project = projectname
+
+The data is then stored in the following tables:
+Table: Projects
+Table: Tests
+Table: Suites
+Table: Cases
+
+The "project name" from the settings.properties is used to indicate for which project the results are. Then the test results written in the accompanying table. So table "Tests" contains the test runs. Table "suites" include the suites that have been tested and its pass or fail. And the same goes for cases.
+
+I hope we can make this a good addition to the "Selenium AES" project. With the final "dashboard" we can generate reports (pdf). I hope that the new Selenium AES can be extended with this new feature.
+
+I like to hear whether you have any additions, improvements or other options.
+
+-------------------------------------
+
+-tests
+--test_id
+--project_name
+--passed
+--suite_total_num
+--suite_passed_num
+--suite_failed_num
+--start_time
+--end_time
+
+-suites
+--suite_id
+--test_id
+--suite_filename
+--browser
+--passed
+--total_time
+--testcase_total_num
+--testcase_passed_num
+--testcase_failed_num
+--command_passed_num
+--command_failed_num
+--command_error_num
+--log
+
+-testcases
+--testcase_id
+--suite_id
+--testcase_filename
+--passed
+--test_tables
